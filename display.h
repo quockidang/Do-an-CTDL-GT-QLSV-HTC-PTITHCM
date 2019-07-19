@@ -32,11 +32,11 @@ void CreateBox(int x, int y, string text, int length)
 	cout << char(200) << setw(length) << setfill(char(205)) << char(205) << char(188);
 }
 
-int xKeyDisplay[6] = { 5,25,50,70,90,105 };
+int xKeyDisplay[8] = { 5,25,45,65,85,95, 105, 115 };
 
 //---------------------------------------------------------------------------------------------
 string keyDisplayCreaditClass[7] = {"Ma Lop", "Ma Mon Hoc", "Nien Khoa", "Hoc Ki", "Nhom", "So Sinh Vien Max", "so Sinh Vien Min" };
-string keyDisplayStudent[7] = { "Ma Sinh Vien", "Ma Lop","Ho","Ten","Phai", "So DT", "Nam Nhap hoc" };
+string keyDisplayStudent[7] = { "Ma SV", "Ma Lop","Ho","Ten","Phai", "So DT", "Nam NH" };
 string keyDisplaySubject[4] = {"Ma MH", "Ten MH", "So TCLT", "So TCTH"};
 // ---------------------------------------------------------------------------------------------
 
@@ -149,7 +149,7 @@ void DisplayEdit(string key[], int nKey,int length)
 	int yAdd = Y_ADD;
 	for (int i = 0; i < nKey; i++)
 	{
-		CreateBox(X_ADD, yAdd,key[i],length);
+		CreateBox(X_ADD + 15, yAdd,key[i],length);
 		yAdd += 3;
 	}
 }

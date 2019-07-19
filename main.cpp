@@ -1,6 +1,6 @@
 #include "processs.h"
 #include "subject.h"
-
+#include "student.h";
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 int main()
@@ -14,9 +14,11 @@ int main()
 	InitTreeSubject(t);
 	//LoadSubject(t);
 	
+	LIST_STUDENT l;
+	InitListStudent(l);
+//	MenuSubjectManager(t);
 	
-	MenuSubjectManager(t);
-	
+	MenuManagerStudent(l);
 	//Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));	
 //	QuickSort(0, 4, keyDisplaySubject);
 //	for(int i =0;i<5;i++)

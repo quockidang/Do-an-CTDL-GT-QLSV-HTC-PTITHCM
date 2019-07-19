@@ -370,7 +370,7 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 		{
 			case 0:
 				if(isEdited) break;
-				CheckMoveAndValidateID(id, isMoveUp, ordinal, isSave, 6);
+				CheckMoveAndValidateID(id, isMoveUp, ordinal, isSave, 20, 10);
 				
 				strcpy(data.idSubject, id.c_str());
 				
@@ -382,13 +382,13 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 				idIsExits = true;
 				break;
 			case 1:
-				CheckMoveAndValidateNameSubject(name, isMoveUp, ordinal, isSave, 8);
+				CheckMoveAndValidateNameSubject(name, isMoveUp, ordinal, isSave, 21);
 				break;
 			case 2:
-				CheckMoveAndValidateNumber(numberTheory,isMoveUp, ordinal, isSave,9, 4);
+				CheckMoveAndValidateNumber(numberTheory,isMoveUp, ordinal, isSave,22, 4);
 				break;
 			case 3:
-				CheckMoveAndValidateNumber(numberPractice,isMoveUp, ordinal, isSave,9,  4);
+				CheckMoveAndValidateNumber(numberPractice,isMoveUp, ordinal, isSave,22,  4);
 		}
 		
 		if (isMoveUp)

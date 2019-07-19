@@ -25,7 +25,7 @@ using namespace std;
 
 
 //only char and number
-void CheckMoveAndValidateID(string &result, bool &isMove, int &ordinal, bool &isSave, int distance)
+void CheckMoveAndValidateID(string &result, bool &isMove, int &ordinal, bool &isSave, int distance, int condition)
 {
 	int lengh = result.length();
 	Gotoxy(X_ADD + distance , ordinal * 3 + Y_ADD);
@@ -40,7 +40,7 @@ void CheckMoveAndValidateID(string &result, bool &isMove, int &ordinal, bool &is
 			{
 				if ((key >= 65 && key <= 90) || (key >= 97 && key <= 122)  || (key >= 48 && key <= 57))
 				{
-					if (count < MAX_LENGTH)
+					if (count < condition)
 					{
 						count++;
 						cout << (char)key;
@@ -87,7 +87,7 @@ void CheckMoveAndValidateID(string &result, bool &isMove, int &ordinal, bool &is
 }
 
 
-void CheckMoveAndValidateName(string &result, bool &isMove, int &ordinal, bool &isSave,int distance)
+void CheckMoveAndValidateName(string &result, bool &isMove, int &ordinal, bool &isSave,int distance, int condition)
 {
 	int lengh = result.length();
 	Gotoxy(X_ADD + distance, ordinal * 3 + Y_ADD);
@@ -103,7 +103,7 @@ void CheckMoveAndValidateName(string &result, bool &isMove, int &ordinal, bool &
 			{
 				if ((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key == SPACE )
 				{
-					if (count < MAX_LENGTH)
+					if (count < condition)
 					{
 						count++;
 						if (!isSpaced && key == SPACE)
@@ -296,6 +296,16 @@ void CheckMoveAndValidateNumber(int &result, bool &isMove, int &ordinal, bool &i
 
 }
 
+void StandardName(char *a)
+{
+	a[0] = toupper(a[0]);
+	int length = strlen(a);
+	for (int i = 1; i < length; ++i)
+	{
+		if (a[i -1] == ' ' && a[i] != ' ') a[i] = toupper(a[i]);
+		else a[i] = tolower(a[i]);
+	}
+}
 /// input subject
 
 //string idSubject = "";
