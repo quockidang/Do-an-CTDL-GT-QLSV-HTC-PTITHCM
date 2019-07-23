@@ -4,7 +4,8 @@
 // credit class
 int pageNowCreditClass = 1;
 int totalPageCreditClass = 0;
-
+int currposCreditClass = 0;
+int currposPrecCreditClass = 0;
 
 // student
 int currposStudent = 0;

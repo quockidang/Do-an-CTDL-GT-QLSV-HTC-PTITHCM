@@ -1,29 +1,37 @@
-#include "processs.h"
-#include "subject.h"
-#include "student.h";
+#include "creditclass.h"
+
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 int main()
  {
 	
 	system("color 5A");
-	
+//	
 	fullscreen();
-		
-	TREE_SUBJECT t;
-	InitTreeSubject(t);
-	//LoadSubject(t);
+//	TREE_SUBJECT t;
+//	InitTreeSubject(t);
 	
-	LIST_STUDENT l;
-	InitListStudent(l);
+//	SUBJECT sj;
+//	string id = "int123";
+//	string name = " ctdl&gt";
+//	strcpy(sj.idSubject, id.c_str());
+//	strcpy(sj.nameSubject, name.c_str());
+//	sj.numberPractice = 1;
+//	sj.numberTheory = 4;
+//	InsertSubjectToTree(t, sj);
+	//cout << arrSubject[0]->idSubject;
+//	LoadSubjectFormFile(t);
 //	MenuSubjectManager(t);
-	
-	MenuManagerStudent(l);
-	//Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));	
-//	QuickSort(0, 4, keyDisplaySubject);
-//	for(int i =0;i<5;i++)
-//	{
-//		cout << keyDisplaySubject[i]<<endl;
-//	}
+//	SaveSubjectToFile(t);
+//	LIST_STUDENT l;
+//	InitListStudent(l);
+//	MenuManagerStudent(l);
+//	NODE_SUBJECT* p =	FindSubject(t, arrSubject[0]->idSubject);
+//	cout << p->_subject.idSubject;
+//	OutputListSubjectPerPage(t, 0);
+
+	PTR_LISTCLASS l = new LISTCLASS;
+	MenuManageCreditClass(l);
+			                  
 	return 0;
 }

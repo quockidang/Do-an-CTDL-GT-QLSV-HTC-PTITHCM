@@ -4,55 +4,71 @@
 #include <fstream>
 
 #include "subject.h"
-
+#include "student.h"
 
 //------------------------------------DATABASE------------------------------------------
-
-//void LoadCreaditClass(PTR_CREDIT_CLASS &l)
-//{
-//	int SizeFlight = sizeof(FLIGHT) - sizeof(TICKET*);
-//	int SizeCreditClass = sizeof(CREDIT_CLASS) - sizeof(LIST_FLIGHT);
-//	fstream fileData("DSLTC.txt", ios::in | ios::binary);
-//}
-
-
-
-void WriteSubjectToFile(NODE_SUBJECT* p, fstream &file, int size) // ghi du lieu vao file
+void Save(TREE_SUBJECT t, fstream &file)
 {
-	if (p != NULL)
+	file << t->_subject.idSubject << endl;
+	file << t->_subject.nameSubject << endl;
+	file << t->_subject.numberPractice << endl;
+	file << t->_subject.numberTheory << endl;
+}
+
+void WriteSubjectToFile(TREE_SUBJECT t, fstream &file)
+{
+	if (t != NULL)
 	{
-		file.write(reinterpret_cast<const char*>(&p->_subject), size);
-		WriteSubjectToFile(p->pLeft, file, size);
-		WriteSubjectToFile(p->pRight, file, size);
+		Save(t, file);
+		WriteSubjectToFile(t->pLeft, file);
+		WriteSubjectToFile(t->pRight, file);	
 	}
 }
 
-void SaveSubject(TREE_SUBJECT t)  // luu du lieu vao file
+void SaveSubjectToFile(TREE_SUBJECT t)
 {
-	fstream myfile("DSMH.txt", ios::out | ios::binary);
-	myfile << nSubject;
-	int sizeData = sizeof(SUBJECT);
-	TREE_SUBJECT p = t;
-	WriteSubjectToFile(p, myfile, sizeData);
-	myfile.close();
+	fstream outFile;
+	outFile.open("DSMH.txt", ios::out);
+	if (outFile.is_open())
+	{
+		// so doc gia..
+		outFile << nSubject << endl;
+		WriteSubjectToFile(t, outFile);
+	}
+	else
+	{
+		cout << "KET NOI VOI FILE DSMH THAT BAI! ";
+	}
+	outFile.close();
 }
 
-
-void LoadSubject(TREE_SUBJECT &t)
+void LoadSubjectFormFile(TREE_SUBJECT &t)
 {
-	fstream myfile("DSMH.txt", ios::in | ios::binary);
-	int n;
-	myfile >> n;
-	int sizeData = sizeof(SUBJECT);
+	fstream inFile;
 	SUBJECT sj;
-	for (int i = 0; i <= n; i++)
+	int n;
+	inFile.open("DSMH.txt", ios::in);
+	if (inFile.is_open())
 	{
-		myfile.read(reinterpret_cast<char*>(&sj), sizeData);
-		InsertSubjectToTree(t, sj);
-		//todo them vao mang
+		string temp;		
+		inFile >> n;
 		
+		for(int i = 0; i <= n; i++)
+		{
+			getline(inFile, temp);
+			inFile.getline(sj.idSubject, 10, '\n');
+			inFile.getline(sj.nameSubject, 30, '\n');
+			inFile >> sj.numberPractice;
+			inFile >> sj.numberTheory;
+			
+			InsertSubjectToTree(t, sj);
+		}
 	}
-}
+	else {
+		cout << "KET NOI VOI FILE DSMH THAT BAI! ";
+	}
 
+	inFile.close();
+}
 #endif
 

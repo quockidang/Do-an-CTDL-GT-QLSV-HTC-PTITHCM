@@ -4,15 +4,16 @@
 
 #include "constant.h"
 #include "display.h"
-#include <string>
+
 struct Subject{
-	char idSubject[10]; // ma mon hoc, key
-	string nameSubject; //ten mon hoc
 	int numberTheory; //so tin chi ly thuyet
 	int numberPractice; //so tin chi thuc hanh
+	char idSubject[10]; // ma mon hoc, key
+	char nameSubject[30]; //ten mon hoc
+	
 };
 typedef struct Subject SUBJECT;
-
+typedef SUBJECT* PTR_SUBJECT;
 struct NodeSubject{
 	SUBJECT _subject;
 	struct NodeSubject *pLeft, *pRight;
@@ -23,10 +24,11 @@ typedef NODE_SUBJECT* TREE_SUBJECT;
 TREE_SUBJECT binaryTree = NULL;
 TREE_SUBJECT rp;
 
-SUBJECT arr[100];
+char arrSubjectId[1000][12];
 
 int indexOutSubject = -1;
 // ........................define tree subject...................
+
 
 // khoi tao cay nhi phan
 void InitTreeSubject(TREE_SUBJECT &root)
@@ -56,23 +58,28 @@ bool CheckIdExists(TREE_SUBJECT t, char idSubject[10] )
 	return false;
 }
 
-TREE_SUBJECT FindSubject(TREE_SUBJECT t, char idSubject[10] ) //return p = null if not found
+TREE_SUBJECT FindSubject(TREE_SUBJECT t, char* id) //return p = null if not found
 {
-	TREE_SUBJECT p = t;
-		while(p !=NULL && strcmp(p->_subject.idSubject,idSubject) !=0) //compare key 
+	if(t != NULL)
+	{ 
+		TREE_SUBJECT p = t;
+		while(p != NULL)
 		{
-			if(strcmp(idSubject,p->_subject.idSubject) < 0 ) 
-				p = p->pLeft;
-			else if(strcmp(idSubject,p->_subject.idSubject) > 0 )
+			if(strcmp(id, p->_subject.idSubject) == 0)
+				return p;
+			else if(strcmp(id, p->_subject.idSubject) > 0)
 				p = p->pRight;
+			else
+				p = p->pLeft;
 		}
-	return (p);
+	}
+	return NULL;	
 }
 
 
 
 // them data vao tree;
-int InsertSubjectToTree(TREE_SUBJECT &t, SUBJECT data)
+void InsertSubjectToTree(TREE_SUBJECT &t, SUBJECT data)
 {
 	// tree emty, data is root of tree
 	if(t == NULL)
@@ -81,9 +88,10 @@ int InsertSubjectToTree(TREE_SUBJECT &t, SUBJECT data)
 		p->_subject = data;
 		p->pLeft = p->pRight = NULL;
 		t = p;				
+	
+		arrSubjectId[++nSubject][12] = data.idSubject;
 		
-		arr[++nSubject] = data;
-		return 1;
+	
 	}
 	else //tree not empty
 	{
@@ -92,36 +100,36 @@ int InsertSubjectToTree(TREE_SUBJECT &t, SUBJECT data)
 		else if(strcmp(data.idSubject,t->_subject.idSubject) > 0 )
 			InsertSubjectToTree(t->pRight, data);
 	
-		return 1;
+		
 	}
-	return 0;
+
 }
 
 
 
-void Swap(SUBJECT &a, SUBJECT &b)
+void Swap(string &a, string &b)
 {
-	SUBJECT temp = a;
+	string temp = a;
 	a = b;
 	b = temp;
 }
 
-void QuickSort(int left, int right, SUBJECT sj[])
+void QuickSort(int left, int right, string arrSubject[])
 {
 	
-	SUBJECT key = sj[(left + right) / 2];
+	string key = arrSubject[(left + right) / 2];
 	
 	int i = left, j = right;
 	do {
-		while (sj[i].nameSubject < key.nameSubject) i++;
-		while (sj[j].nameSubject > key.nameSubject) j--;
+		while (arrSubject[i] < key) i++;
+		while (arrSubject[j] < key) j--;
 		if (i <= j) {
-			if (i < j) Swap(sj[i], sj[j]);
+			if (i < j) Swap(arrSubject[i], arrSubject[j]);
 			i++;	j--;
 		}
 	} while (i <= j);
-	if (left < j) QuickSort(left, j, sj);
-	if (right > i) QuickSort(i, right, sj);
+	if (left < j) QuickSort(left, j, arrSubject);
+	if (right > i) QuickSort(i, right, arrSubject);
 }
 
 void DeleteSubjectCase_3 ( TREE_SUBJECT &r )
@@ -130,14 +138,29 @@ void DeleteSubjectCase_3 ( TREE_SUBJECT &r )
 		DeleteSubjectCase_3 (r->pLeft);
 	//den day r la nut cuc trai cua cay con ben phai co nut goc la rp}
 	else
-		{
+	{
 		rp->_subject = r->_subject; //Chep noi dung cua r sang rp ; // de lat nua free(rp)
 		rp = r;
 		r = rp->pRight;
-		}
+	}
 }
+
+void FindReplace(NODE_SUBJECT* &p, NODE_SUBJECT* &q)
+{
+	if (q->pRight != NULL)
+	{
+		FindReplace(p, q->pRight);
+	}
+	else
+	{
+		p->_subject = q->_subject;
+		p = q;
+		q = q->pLeft;
+	}
+}
+
 // xoa Mon hoc trong tree
-bool DeleteSubject(TREE_SUBJECT &t, char *id)
+bool IsDeleteSubject(TREE_SUBJECT &t, SUBJECT x)
 {
 	if(t == NULL)
 	{
@@ -145,20 +168,20 @@ bool DeleteSubject(TREE_SUBJECT &t, char *id)
 	}
 	else
 	{
-		if(strcmp(id,t->_subject.idSubject) > 0)
-			DeleteSubject(t->pRight, id);
-		else if(strcmp(id,t->_subject.idSubject) < 0)
-			DeleteSubject(t->pLeft, id);
+		if(strcmp(x.idSubject,t->_subject.idSubject) > 0)
+			IsDeleteSubject(t->pRight, x);
+		else if(strcmp(x.idSubject,t->_subject.idSubject) < 0)
+			IsDeleteSubject(t->pLeft, x);
 		else // data.id == t->data.id
 		{
-			TREE_SUBJECT temp = t;
+			NODE_SUBJECT* temp = t;
 			if(t->pLeft == NULL)
 				t = t->pRight;
 			else if(t->pRight == NULL)
 				t = t->pLeft;
 			else // node co 2 child
 			{
-				DeleteSubjectCase_3(t->pRight);
+				FindReplace(temp, t->pLeft);
 			}
 			
 			delete temp;
@@ -198,8 +221,9 @@ void OutputListSubjectPerPage(TREE_SUBJECT t , int indexBegin)
 	for(int i = 0; i + indexBegin <= nSubject && i < QUANTITY_PER_PAGE; i++)
 	{
 		
-		NODE_SUBJECT* s = FindSubject(t, arr[i + indexBegin].idSubject);
 		
+		NODE_SUBJECT* s = FindSubject(t, ConvertStringToCharArray(arrSubjectId[i + indexBegin]));
+		if(s == NULL) cout << "Fail";
 		OutputSubject(s->_subject, i * 2);
 	}
 	Gotoxy(X_PAGE, Y_PAGE);
@@ -245,7 +269,7 @@ NODE_SUBJECT* ChooseSubject(TREE_SUBJECT &t)
 	int keyboard_read = 0;
 	int PASS = 1;
 	
-	QuickSort(0, nSubject, arr);
+	//QuickSort(0, nSubject, arr);
 		
 	Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 	
@@ -253,7 +277,7 @@ NODE_SUBJECT* ChooseSubject(TREE_SUBJECT &t)
 	currposSubject = (pageNowSubject - 1) * QUANTITY_PER_PAGE;
 	currposPrecSubject = (pageNowSubject - 1) * QUANTITY_PER_PAGE;
 	
-	NODE_SUBJECT* newSubject = FindSubject(t, arr[0].idSubject);
+	NODE_SUBJECT* newSubject = FindSubject(t, ConvertStringToCharArray(arrSubjectId[currposSubject]));
 	
 	//OutputListSubject(t);
 	OutputListSubjectPerPage(t, 0);
@@ -279,7 +303,7 @@ NODE_SUBJECT* ChooseSubject(TREE_SUBJECT &t)
 					currposSubject = currposSubject - 1;
 					oldSubject = newSubject;
 					
-					newSubject = FindSubject(t, arr[currposSubject].idSubject);
+					NODE_SUBJECT* newSubject = FindSubject(t, ConvertStringToCharArray(arrSubjectId[currposSubject]));
 					EffectiveMenuSubject(currposSubject, newSubject->_subject, oldSubject->_subject);
 				}							
 				break;
@@ -290,7 +314,7 @@ NODE_SUBJECT* ChooseSubject(TREE_SUBJECT &t)
 					currposSubject = currposSubject + 1;
 					oldSubject = newSubject;
 					
-					newSubject = FindSubject(t, arr[currposSubject].idSubject);
+					NODE_SUBJECT* newSubject = FindSubject(t, ConvertStringToCharArray(arrSubjectId[currposSubject]));
 					EffectiveMenuSubject(currposSubject, newSubject->_subject, oldSubject->_subject);
 				}
 				break;
@@ -300,7 +324,7 @@ NODE_SUBJECT* ChooseSubject(TREE_SUBJECT &t)
 					pageNowSubject++;
 					ChangePageSubject(t);
 					
-					newSubject = FindSubject(t, arr[currposSubject].idSubject);
+					NODE_SUBJECT* newSubject = FindSubject(t, ConvertStringToCharArray(arrSubjectId[currposSubject]));
 					oldSubject = newSubject;
 					
 					OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
@@ -313,7 +337,7 @@ NODE_SUBJECT* ChooseSubject(TREE_SUBJECT &t)
 					pageNowSubject--;
 					ChangePageSubject(t);
 					
-					newSubject = FindSubject(t, arr[currposSubject].idSubject);
+					NODE_SUBJECT* newSubject = FindSubject(t, ConvertStringToCharArray(arrSubjectId[currposSubject]));
 					oldSubject = newSubject;
 					
 					OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
@@ -354,13 +378,13 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 		numberPractice = data.numberPractice;
 		numberTheory = data.numberTheory;
 		
-		Gotoxy(X_ADD + 10, 0 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 20, 0 * 3 + Y_ADD);
 		cout << id;
-		Gotoxy(X_ADD + 10, 1 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 21, 1 * 3 + Y_ADD);
 		cout << name;
-		Gotoxy(X_ADD + 10, 2 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 22, 2 * 3 + Y_ADD);
 		cout << numberPractice;
-		Gotoxy(X_ADD + 10, 3 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 22, 3 * 3 + Y_ADD);
 		cout << numberTheory;		
 	}
 	
@@ -424,20 +448,19 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 			{
 				
 				
-				strcpy(data.idSubject, id.c_str());
-				
-				data.nameSubject = name;
+				//strcpy(data.idSubject, id.c_str());
+				strcpy(data.nameSubject, name.c_str());
+				//data.nameSubject = name;
 				data.numberPractice = numberPractice;
 				data.numberTheory = numberTheory;
 				
 				if(isEdited)
 				{
-					char ids[10];
-					strcpy(ids, id.c_str());
-					NODE_SUBJECT* p = FindSubject(t, ids);
+					
+					NODE_SUBJECT* p = FindSubject(t, data.idSubject);
 					p->_subject = data;	
 					int index = 0;
-					while(index <= nSubject && arr[index].idSubject != data.idSubject) index++;				
+					while(index <= nSubject && arrSubjectId[index] != data.idSubject) index++;				
 				}
 				else
 				{
@@ -471,7 +494,7 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 		indexOutSubject = -1;
 		if(nSubject  != -1)
 		{
-			QuickSort(0, nSubject, arr);
+			QuickSort(0, nSubject, arrSubjectId);
 		}
 		
 		Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
@@ -522,16 +545,16 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 							Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 							for(int i = 0; i <= nSubject; i++)
 							{
-								if(arr[i].idSubject == k->_subject.idSubject)
+								if(arrSubjectId[i] == k->_subject.idSubject)
 								{
 									for(int j = i; j < nSubject; j++)
-										arr[j] = arr[j+1];
+										arrSubjectId[j] = arrSubjectId[j+1];
 									nSubject--;
 									break;
 								}
 							}
 							
-							if(DeleteSubject(t, k->_subject.idSubject))
+							if(IsDeleteSubject(t, k->_subject))
 							{
 								OutputListSubjectPerPage(t, (pageNowSubject -1) * QUANTITY_PER_PAGE);
 								Gotoxy(X_NOTIFY, Y_NOTIFY);
@@ -556,7 +579,7 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 						pageNowSubject++;
 					
 						Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
-							OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
+						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
 					}
 					else if(key == PAGE_UP && pageNowSubject > 1)
 					{
