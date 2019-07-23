@@ -36,7 +36,8 @@ int xKeyDisplay[8] = { 5,25,45,65,85,95, 105, 115 };
 
 //---------------------------------------------------------------------------------------------
 string keyDisplayCreaditClass[7] = {"Ma Lop:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
-string keyDisplayStudent[7] = { "Ma SV:", "Ma Lop:","Ten:","Ho:","Phai:", "So DT:", "Nam NH:" };
+string keyDisplayCreaditClassEdit[6] = {"Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
+string keyDisplayStudent[7] = { "Ma SV:", "Ma Lop:","Ho:","Ten:","Phai:", "So DT:", "Nam NH:" };
 string keyDisplaySubject[4] = {"Ma MH:", "Ten MH:", "So TCLT:", "So TCTH:"};
 // ---------------------------------------------------------------------------------------------
 

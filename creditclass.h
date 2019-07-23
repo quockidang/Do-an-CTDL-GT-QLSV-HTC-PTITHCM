@@ -124,7 +124,7 @@ typedef CREDITCLASS* PTR_CREDITCLASS;
 
 struct ListClass{
 	
-	int n = -1;
+	int n = 0;
 	PTR_CREDITCLASS *listCreditClass = new PTR_CREDITCLASS[5000]; 
 };
 typedef struct ListClass LISTCLASS;
@@ -255,25 +255,23 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 		group = cc->group;
 		
 		// binding data;
-		Gotoxy(X_ADD + 17, 0 * 3 + Y_ADD);
-		cout << id;
 		
-		Gotoxy(X_ADD + 16, 1 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 16, 0 * 3 + Y_ADD);
 		cout << idSubject;
 		
-		Gotoxy(X_ADD + 13, 2 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 13, 1 * 3 + Y_ADD);
 		cout << shoolYear;
 		
-		Gotoxy(X_ADD + 18, 3 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 18, 2 * 3 + Y_ADD);
 		cout << semester;
 		
-		Gotoxy(X_ADD + 15, 4 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 15, 3 * 3 + Y_ADD);
 		cout << group;
 		
-		Gotoxy(X_ADD + 16, 5 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 16, 4 * 3 + Y_ADD);
 		cout << studentMax;
 		
-		Gotoxy(X_ADD + 16, 6 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 16, 5 * 3 + Y_ADD);
 		cout << studentMin;
 		
 		
@@ -286,23 +284,23 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 		switch(ordinal)
 		{
 											
-			case 1:
+			case 0:
 				CheckMoveAndValidateID(idSubject, isMoveUp, ordinal, isSave, 20, 10);
 				break;
 				
-			case 2:
+			case 1:
 				CheckMoveAndValidateNumber(shoolYear,isMoveUp, ordinal, isSave,17, 2019);
 				break;
-			case 3:
+			case 2:
 				CheckMoveAndValidateNumber(semester,isMoveUp, ordinal, isSave,21, 3);
 				break;
-			case 4:
+			case 3:
 				CheckMoveAndValidateNumber(group,isMoveUp, ordinal, isSave,19, 3);
 				break;
-			case 5:
+			case 4:
 				CheckMoveAndValidateNumber(studentMax,isMoveUp, ordinal, isSave,20, MAX_STUDENT);
 				break;
-			case 6:
+			case 5:
 				CheckMoveAndValidateNumber(studentMin,isMoveUp, ordinal, isSave,20, MIN_STUDENT);
 				break;				
 		}
@@ -316,7 +314,7 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 		}
 		else
 		{
-			if (ordinal == 6)
+			if (ordinal == 5)
 				isMoveUp = true;
 			ordinal++;
 		}
@@ -355,7 +353,7 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 				}else
 				{
 					InitListRegisterStudent(cc->listRegisterStudent);
-					l->listCreditClass[++l->n] = new CREDITCLASS;
+					l->listCreditClass[l->n] = new CREDITCLASS;
 					l->listCreditClass[l->n] = cc;
 				}
 				DeleteMenuAdd();
@@ -487,7 +485,7 @@ void MenuManageCreditClass(PTR_LISTCLASS &l)
 					if(key == KEY_F2)
 					{
 						PTR_CREDITCLASS cc = new CREDITCLASS;
-						DisplayEdit(keyDisplayCreaditClass, sizeof(keyDisplayCreaditClass) / sizeof(string), 35);
+						DisplayEdit(keyDisplayCreaditClassEdit, sizeof(keyDisplayCreaditClassEdit) / sizeof(string), 35);
 						InputCreditClass(l, cc);
 						totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
 						pageNowCreditClass = 1;

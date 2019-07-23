@@ -5,9 +5,9 @@
 struct student{
 	char idStudent[12];
 	char idClass[15];
-	string fistName, lastName;
+	char fistName[10], lastName[20];
 	int sex = 1; // 1 male, 2 female
-	string phoneNUmber;
+	char phoneNUmber[13];
 	int yearAdmission; // nam nhap hoc
 };
 typedef struct student STUDENT;
@@ -42,6 +42,7 @@ NODE_STUDENT* GetNodeStudent(STUDENT DATA)
 void InitListStudent(LIST_STUDENT &l)
 {
 	l.pHead = l.pTail = NULL;
+	
 }
 
 
@@ -76,11 +77,6 @@ void AddTailListStudent(LIST_STUDENT &l, STUDENT data)
 		l.pTail = p;
 	}
 	
-	
-	
-	
-
-
 	++l.n;
 }
 
@@ -222,10 +218,10 @@ bool ClearListStudent(LIST_STUDENT &l)
 void OutputStudent(STUDENT st, int locate)
 {
 	DeleteOldData(sizeof(keyDisplayStudent) / sizeof(string), locate);
-	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 3 + locate); cout << st.fistName;
-	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + locate); cout << st.lastName;
-	Gotoxy(xKeyDisplay[2] + 1, Y_DISPLAY + 3 + locate); cout << st.idClass;
-	Gotoxy(xKeyDisplay[3] + 1, Y_DISPLAY + 3 + locate); cout << st.idStudent;
+	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 3 + locate); cout << st.idStudent;
+	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + locate); cout << st.idClass;
+	Gotoxy(xKeyDisplay[2] + 1, Y_DISPLAY + 3 + locate); cout << st.fistName;
+	Gotoxy(xKeyDisplay[3] + 1, Y_DISPLAY + 3 + locate); cout << st.lastName;
 	Gotoxy(xKeyDisplay[4] + 1, Y_DISPLAY + 3 + locate);
 	if(st.sex == 1)cout << "Nam";
 	else cout << "Nu";
@@ -372,9 +368,9 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 			// binding data
 			strcpy(st.idStudent, idStudent.c_str());
 			strcpy(st.idClass, idClass.c_str());
-			st.fistName = firstName;
-			st.lastName = lastName;
-			st.phoneNUmber = phoneNumber;
+			strcpy(st.fistName, firstName.c_str());
+			strcpy(st.lastName, lastName.c_str());
+			strcpy(st.phoneNUmber, phoneNumber.c_str());
 			st.sex = sex;
 			st.yearAdmission = yearAdmission;
 			
@@ -520,7 +516,7 @@ void ChangePageManageStudent(LIST_STUDENT l)
 	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
 }
 
-void MenuManagerStudent(LIST_STUDENT l)
+void MenuManagerStudent(LIST_STUDENT &l)
 {
 backMenu:
 	clrscr();
@@ -542,7 +538,7 @@ backMenu:
 				{
 					STUDENT st;
 					DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
-					InputStudent(l, st);
+					InputStudent(l, st, false);
 					
 					totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
 					ChangePageManageStudent(l);
@@ -576,6 +572,8 @@ backMenu:
 					
 					DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
 					InputStudent(l, k->_student, true);
+					clrscr();
+					Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
 					OutputListStudentPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
 					Gotoxy(X_NOTIFY, Y_NOTIFY);
 					cout << "Sua thanh cong";
