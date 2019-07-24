@@ -2,11 +2,112 @@
 #define _PROCESSS_H
 
 #include <fstream>
-
+#include "creditclass.h"
 
 #include "student.h"
 
 //------------------------------------DATABASE------------------------------------------
+void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
+{
+	file << cc->idSubject<< endl;
+	file << cc->idClass<< endl;
+	file << cc->group<< endl;
+	file << cc->semester<< endl;
+	file << cc->shoolYear<< endl;
+	file << cc->studentMax<< endl;
+	file << cc->studentMin<< endl;
+	
+	file << cc->listRegisterStudent.n << endl;
+	for(NODE_REGISTERSTUDENT* p = cc->listRegisterStudent.pHead; p != NULL; p->pNext)
+	{
+		file << p->_registerStudent.idStudent << endl;
+		file << p->_registerStudent.point << endl;
+	}
+
+}
+
+void SaveCreditClassToFile(PTR_LISTCREDITCLASS l)
+{
+	fstream outFile;
+	outFile.open("DSLCT.txt", ios::out );
+	if (outFile.is_open())
+	{
+		outFile << l->n <<endl;
+		for(int i = 0; i<= l->n;i++)
+		{
+			SaveCreditClass(l->listCreditClass[i], outFile);
+		}
+	}else
+	{
+		
+		cout << "KET NOI VOI FILE DocGia THAT BAI! ";
+	}
+	
+	outFile.close();
+}
+
+
+void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
+{
+	fstream inFile;
+	
+	int nCreditClass, nRegisterStudent;
+	
+	
+	inFile.open("DSLTC.txt", ios::in);
+	
+	if(inFile.is_open())
+	{
+		string temp;		
+		inFile >> nCreditClass;
+		getline(inFile, temp);
+		for(int i = 0; i <= nCreditClass; i++)
+		{
+			l->listCreditClass[i] = new CREDITCLASS;
+			if(l->listCreditClass[i] == NULL) continue;
+			
+			// load thong tin vao LTC
+			inFile.getline(l->listCreditClass[i]->idSubject, 10, '\n');
+			inFile >> l->listCreditClass[i]->idClass;
+			inFile >> l->listCreditClass[i]->group;
+			inFile >> l->listCreditClass[i]->semester;
+			inFile >> l->listCreditClass[i]->shoolYear;
+			inFile >> l->listCreditClass[i]->studentMax;
+			inFile >> l->listCreditClass[i]->studentMin;
+			
+			inFile >> nRegisterStudent;
+			getline(inFile, temp);
+			
+			InitListRegisterStudent(l->listCreditClass[i]->listRegisterStudent);
+			REGISTER_STUDENT rs;
+			for(int j = 0; j < nRegisterStudent; j++)
+			{
+				inFile.getline(rs.idStudent, 10, '\n');
+				inFile >> rs.point;
+				
+				AddTailListRegister(l->listCreditClass[i]->listRegisterStudent, rs);
+			}			
+			
+			delete l->listCreditClass[i];
+		}
+	}
+	
+	
+	inFile.close();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Save(TREE_SUBJECT t, fstream &file)
 {
 	file << t->_subject.idSubject << endl;
@@ -31,7 +132,7 @@ void SaveSubjectToFile(TREE_SUBJECT t)
 	outFile.open("DSMH.txt", ios::out);
 	if (outFile.is_open())
 	{
-		// so doc gia..
+		
 		outFile << nSubject << endl;
 		WriteSubjectToFile(t, outFile);
 	}

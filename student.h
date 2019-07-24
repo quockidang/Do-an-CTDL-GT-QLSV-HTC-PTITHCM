@@ -1,6 +1,6 @@
 #ifndef _STUDENT_H
 #define _STUDENT_H
-#include"Subject.h"
+//#include"creditclass.h"
 
 struct student{
 	char idStudent[12];
@@ -24,9 +24,8 @@ struct ListStudent{
 };
 typedef struct ListStudent LIST_STUDENT;
 
-STUDENT** arrStudent = new STUDENT*[MAX_STUDENT];
-
-
+string arrIdStudent[100];
+int nStudentInClass = -1;
 // get node student -- lay dia chi cua mot sinh vie
 NODE_STUDENT* GetNodeStudent(STUDENT DATA)
 {
@@ -59,8 +58,7 @@ void AddHeadListStudent(LIST_STUDENT &l, STUDENT data)
 
 bool ListStudentIsEmty(LIST_STUDENT l)
 {
-	if(l.n == 0) return true;
-	return false;
+	return l.pHead = NULL;
 	
 }
 // add tail list student
@@ -76,8 +74,9 @@ void AddTailListStudent(LIST_STUDENT &l, STUDENT data)
 		l.pTail->pNext = p;
 		l.pTail = p;
 	}
-	
+
 	++l.n;
+	
 }
 
 
@@ -167,6 +166,7 @@ bool IsDeletedTail(LIST_STUDENT &l)
 			l.pTail = beforeP;
 			beforeP->pNext = NULL;
 			delete p;
+			
 			--l.n;
 			return true;
 		}
@@ -215,50 +215,76 @@ bool ClearListStudent(LIST_STUDENT &l)
 	return true;
 }
 
+
+void QuickSort(int left, int right, string* arr) {
+	string key = arr[(left + right) / 2];
+	int i = left, j = right;
+	do {
+		while (strcmp((char*)arr[i].c_str(), (char*)key.c_str()) < 0) i++;
+		while (strcmp((char*)arr[j].c_str(), (char*)key.c_str()) > 0) j--;
+		if (i <= j) {
+			if (i < j) swap(arr[i], arr[j]);
+			i++;	j--;
+		}
+	} while (i <= j);
+	if (left < j) QuickSort(left, j, arr);
+	if (right > i) QuickSort(i, right, arr);
+}
+
+
+
 void OutputStudent(STUDENT st, int locate)
 {
 	DeleteOldData(sizeof(keyDisplayStudent) / sizeof(string), locate);
 	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 3 + locate); cout << st.idStudent;
-	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + locate); cout << st.idClass;
-	Gotoxy(xKeyDisplay[2] + 1, Y_DISPLAY + 3 + locate); cout << st.fistName;
-	Gotoxy(xKeyDisplay[3] + 1, Y_DISPLAY + 3 + locate); cout << st.lastName;
-	Gotoxy(xKeyDisplay[4] + 1, Y_DISPLAY + 3 + locate);
+	
+	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + locate); cout << st.fistName;
+	Gotoxy(xKeyDisplay[2] + 1, Y_DISPLAY + 3 + locate); cout << st.lastName;
+	Gotoxy(xKeyDisplay[3] + 1, Y_DISPLAY + 3 + locate);
 	if(st.sex == 1)cout << "Nam";
 	else cout << "Nu";
-	Gotoxy(xKeyDisplay[5] + 1, Y_DISPLAY + 3 + locate); cout << st.phoneNUmber;
-	Gotoxy(xKeyDisplay[6] + 1, Y_DISPLAY + 3 + locate); cout << st.yearAdmission;
+	Gotoxy(xKeyDisplay[4] + 1, Y_DISPLAY + 3 + locate); cout << st.phoneNUmber;
+	Gotoxy(xKeyDisplay[5] + 1, Y_DISPLAY + 3 + locate); cout << st.yearAdmission;
 }
 
-void OutputListStudent(LIST_STUDENT l)
+void OutputListStudentWithIdClass(LIST_STUDENT l, char* idClass)
 {
 	if(l.pHead == NULL && l.pTail == NULL) return;
 	int count = -1;
 	
 	for(NODE_STUDENT* q = l.pHead; q != NULL; q=q->pNext)
 	{
-		count++;
-		OutputStudent(q->_student, count);
+		if(strcmp(q->_student.idClass, idClass) == 0)
+		{
+			count++;
+			OutputStudent(q->_student, count);
+		}		
 	}
 }
 	
-void OutputListStudentPerPage(LIST_STUDENT l, int indexBegin)
+void OutputListStudentWithIdClassPerPage(LIST_STUDENT l, int indexBegin, char* idClass)
 {
 	if (l.pHead == NULL && l.pTail == NULL) return;
 	int count = -1;
 	
 	for(NODE_STUDENT* q = l.pHead; q != NULL; q=q->pNext)
 	{
-		count++;
-		if(count == indexBegin)
+		if(strcmp(q->_student.idClass, idClass) == 0)
 		{
-			int i = -1;			
-			while (q != NULL && i < QUANTITY_PER_PAGE - 1)
+			count++;
+			if(count == indexBegin)
 			{
-				OutputStudent(q->_student, (++i) * 2);
-				q = q->pNext;
+				int i = -1; 
+				while (q != NULL && i < QUANTITY_PER_PAGE - 1)
+				{
+					OutputStudent(q->_student, (++i) * 2);
+					q = q->pNext;
+				}
+				break;
 			}
-			break;
 		}
+		
+			
 	}
 	
 	Gotoxy(X_PAGE, Y_PAGE);
@@ -282,14 +308,14 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 	bool isSave = false;
 	bool idIsExist = false;
 	
-	string idClass, idStudent, firstName, lastName, phoneNumber;
+	string idStudent, firstName, lastName, phoneNumber;
 	int yearAdmission = 0, sex = 0;
 	
 	
+
 	if(isEdited)
-	{
-		// binding data
-		idClass = st.idClass;
+	{		// binding data
+		
 		idStudent = st.idStudent;
 		firstName = st.fistName;
 		lastName = st.lastName;
@@ -300,20 +326,18 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		
 		Gotoxy(X_ADD  + 20, 0 * 3 + Y_ADD);
 		cout << idStudent;
-		Gotoxy(X_ADD + 21, 1 * 3 + Y_ADD);
-		cout << idClass;
-		Gotoxy(X_ADD + 17, 2 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 17, 1 * 3 + Y_ADD);
 		cout << firstName;
-		Gotoxy(X_ADD + 18, 3 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 18, 2 * 3 + Y_ADD);
 		cout << lastName;		
-		Gotoxy(X_ADD + 19, 4 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 19, 3 * 3 + Y_ADD);
 		cout << sex;
-		Gotoxy(X_ADD + 20, 5 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 20, 4 * 3 + Y_ADD);
 		cout << phoneNumber;
-		Gotoxy(X_ADD + 21, 6 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 21, 5 * 3 + Y_ADD);
 		cout << yearAdmission;		
 	}
-	
+		
 	while(true)
 	{
 		switch(ordinal)
@@ -327,23 +351,21 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 					break;
 				}
 				idIsExist = true;
+				
 				break;
 			case 1:
-				CheckMoveAndValidateID(idClass, isMoveUp, ordinal, isSave, 21, 15);
-				break;
-			case 2:
 				CheckMoveAndValidateNameSubject(firstName, isMoveUp, ordinal, isSave, 17);
 				break;
-			case 3:
+			case 2:
 				CheckMoveAndValidateNameSubject(lastName, isMoveUp, ordinal, isSave, 18);
 				break;
-			case 4:
+			case 3:
 				CheckMoveAndValidateNumber(sex, isMoveUp, ordinal, isSave, 19, 2);
 				break;
-			case 5:
+			case 4:
 				CheckMoveAndValidateID(phoneNumber, isMoveUp, ordinal, isSave, 20, 11);
 				break;
-			case 6:
+			case 5:
 				CheckMoveAndValidateNumber(yearAdmission, isMoveUp, ordinal, isSave, 21, 2019);
 				break;	
 		}
@@ -357,7 +379,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		}
 		else
 		{
-			if (ordinal == 6)
+			if (ordinal == 5)
 				isMoveUp = true;
 			ordinal++;
 		}
@@ -367,7 +389,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		{
 			// binding data
 			strcpy(st.idStudent, idStudent.c_str());
-			strcpy(st.idClass, idClass.c_str());
+			
 			strcpy(st.fistName, firstName.c_str());
 			strcpy(st.lastName, lastName.c_str());
 			strcpy(st.phoneNUmber, phoneNumber.c_str());
@@ -375,9 +397,10 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 			st.yearAdmission = yearAdmission;
 			
 			
-			Gotoxy(X_NOTIFY, Y_NOTIFY);
+			Gotoxy(X_NOTIFY, Y_NOTIFY);			
 			cout << setw(50) << setfill(' ') << " ";
-			if(idStudent.empty() || idClass.empty() || sex == 0 || firstName.empty() || lastName.empty() || yearAdmission == 0 )
+			if(idStudent.empty()) return;
+			if(idStudent.empty() || sex == 0 || firstName.empty() || lastName.empty() || yearAdmission == 0 || phoneNumber.empty() )
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY);
 				cout << "Cac truong du lieu khong dc de trong";
@@ -434,7 +457,7 @@ void ChangePageChooseStudent(LIST_STUDENT l)
 	currposPrecStudent = (pageNowStudent - 1) * QUANTITY_PER_PAGE;
 }
 
-NODE_STUDENT* ChooseStudent(LIST_STUDENT l)
+NODE_STUDENT* ChooseStudent(LIST_STUDENT l, char* idClass)
 {
 	int keyboard_read = 0;
 	ShowCur(false);
@@ -446,7 +469,7 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l)
 	NODE_STUDENT* newNodeStudent = FindStudentByOrdinal(l, currposStudent);
 	NODE_STUDENT* oldNodeStudent = NULL;
 	
-	OutputListStudentPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
+	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
 	SetDefaultChooseStudent(newNodeStudent->_student, currposStudent);
 	
 	while(true)
@@ -479,7 +502,7 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l)
 				{
 					pageNowStudent++;
 					ChangePageChooseStudent(l);
-					OutputListStudentPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
+					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
 					
 					newNodeStudent = FindStudentByOrdinal(l, currposStudent);
 					SetDefaultChooseStudent(newNodeStudent->_student, currposStudent);
@@ -491,7 +514,7 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l)
 				{
 					pageNowStudent--;
 					ChangePageChooseStudent(l);
-					OutputListStudentPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
+					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
 					newNodeStudent = FindStudentByOrdinal(l, currposStudent);
 					SetDefaultChooseStudent(newNodeStudent->_student, currposStudent);
 				}
@@ -508,11 +531,11 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l)
 	
 }
 
-void ChangePageManageStudent(LIST_STUDENT l)
+void ChangePageManageStudent(LIST_STUDENT l, char* idClass)
 {
 	clrscr();
-	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY CAC CHUYEN BAY";
-	OutputListStudentPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
+	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + (string)idClass ;
+	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
 	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
 }
 
@@ -521,11 +544,29 @@ void MenuManagerStudent(LIST_STUDENT &l)
 backMenu:
 	clrscr();
 	pageNowStudent = 1;
-	OutputListStudentPerPage(l, 0);
-	
-	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN";
 	int key;
+	string idClass;
+	Gotoxy(X_ADD - 7 , Y_ADD);
+	cout << "NHAP VAO MA LOP CAN QUAN LY: ";
+	CheckMoveAndValdateIdClass(idClass, 22);
+	Gotoxy(X_NOTIFY - 10, Y_NOTIFY);
+	cout << "BAN CO MUON SUA LAI MA LOP";
+	Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1);
+	cout <<"ENTER NEU MA LOP DA DUNG HOAC NHAN PHIM BAT KI DE NHAP LAI";
+	key = _getch();
+	if(key == ENTER)
+	{
+
+	}else goto backMenu;
+	
+	clrscr();
+	OutputListStudentWithIdClassPerPage(l, 0, (char*)idClass.c_str());
+	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
+	
+	
+	
+	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass ;
+	
 	while(true)
 	{
 		while(_kbhit())
@@ -536,18 +577,24 @@ backMenu:
 				key = _getch();
 				if(key == KEY_F2)
 				{
+				
+				
 					STUDENT st;
+					strcpy(st.idClass, idClass.c_str());
 					DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
 					InputStudent(l, st, false);
 					
+					string ids = (string)st.idStudent;
+					if(ids.empty()) return;
+					
 					totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
-					ChangePageManageStudent(l);
+					ChangePageManageStudent(l, (char*)idClass.c_str());
 					Gotoxy(X_NOTIFY, Y_NOTIFY);
 					cout << "Them thanh cong";
 				}
 				else if( key == KEY_F3)
 				{
-					NODE_STUDENT* k = ChooseStudent(l);
+					NODE_STUDENT* k = ChooseStudent(l,(char*)idClass.c_str());
 					if(k == NULL) goto backMenu;
 					
 					Gotoxy(X_NOTIFY, Y_NOTIFY);
@@ -559,34 +606,46 @@ backMenu:
 						{
 							totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
 							if(l.n % QUANTITY_PER_PAGE == 0) pageNowStudent--;
-							ChangePageManageStudent(l);
+							ChangePageManageStudent(l, (char*)idClass.c_str());
 							Gotoxy(X_NOTIFY, Y_NOTIFY);
 							cout << "Xoa thanh cong";
+							
+							for(int i = 0; i <= l.n; i++)
+							{
+								
+								if(strcmp(k->_student.idStudent, (char*)arrIdStudent[i].c_str()) == 0)
+								{
+									for(int j = i; j < l.n; j++)
+										arrIdStudent[j] = arrIdStudent[j+1];
+									
+									break;
+								}
+							}
 						}
 					}else goto backMenu;
 				}
 				else if( key == KEY_F4)
 				{
-					NODE_STUDENT* k = ChooseStudent(l);
+					NODE_STUDENT* k = ChooseStudent(l, (char*)idClass.c_str());
 					if(k == NULL) goto backMenu;
 					
 					DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
 					InputStudent(l, k->_student, true);
 					clrscr();
 					Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-					OutputListStudentPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
+					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, (char*)idClass.c_str());
 					Gotoxy(X_NOTIFY, Y_NOTIFY);
 					cout << "Sua thanh cong";
 				}
 				else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
 				{
 					pageNowStudent++;
-					ChangePageManageStudent(l);
+					ChangePageManageStudent(l, (char*)idClass.c_str());
 				}
 				else if(key == PAGE_UP && pageNowStudent > 1)
 				{
 					pageNowStudent--;
-					ChangePageManageStudent(l);
+					ChangePageManageStudent(l, (char*)idClass.c_str());
 				}
 			}
 			else if(key == ESC)

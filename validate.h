@@ -86,6 +86,44 @@ void CheckMoveAndValidateID(string &result, bool &isMove, int &ordinal, bool &is
 
 }
 
+void CheckMoveAndValdateIdClass(string &result, int distance)
+{
+	int lengh = result.length();
+	Gotoxy(X_ADD + distance , Y_ADD);
+	cout << result;
+	int count = lengh;
+	while (true)
+	{
+		while (_kbhit())
+		{
+			int key = _getch();
+			if (key != 224 && key != SPACE && key != 0)
+			{
+				if ((key >= 65 && key <= 90) || (key >= 97 && key <= 122)  || (key >= 48 && key <= 57))
+				{
+					if (count < 15)
+					{
+						count++;
+						cout << (char)key;
+						result += (char)key;
+					}
+					
+				}
+				else if (key == ENTER)
+					return;
+				else if (key == BACKSPACE && count >0)
+				{
+					cout << "\b" << " " << "\b";
+					result.erase(result.length() - 1,1);
+					count--;
+
+				}
+			}
+		
+		}//kbhit
+	}//while true
+}
+
 
 void CheckMoveAndValidateName(string &result, bool &isMove, int &ordinal, bool &isSave,int distance, int condition)
 {
@@ -172,7 +210,7 @@ void CheckMoveAndValidateNameSubject(string &result, bool &isMove, int &ordinal,
 			{
 				if ((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key == SPACE || (key >= 48 && key <= 57) || key == 46 )
 				{
-					if (count < 30)
+					if (count < 25)
 					{
 						count++;
 						if (!isSpaced && key == SPACE)

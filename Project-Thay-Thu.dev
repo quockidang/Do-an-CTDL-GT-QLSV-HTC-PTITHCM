@@ -150,8 +150,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit12]
+FileName=registerstudent.h
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit11]
-FileName=Untitled1.cpp
+FileName=registerstudent.h
 CompileCpp=1
 Folder=
 Compile=1

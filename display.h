@@ -3,11 +3,14 @@
 
 
 
-
 #include "validate.h"
 
 
+// main menu .....
+string keyMainMenu[4] = {"Mon Hoc", "Sinh Vien", "Lop Tin Chi", "Thong Ke"};
+string keyStatistic[] = {"DSSV  LTC", "DSSV LOP" "Ban Diem Mon Hoc", "Diem TB Khoa Hoc", "Ban Diem Tong ket" };
 
+int xMainMenu[5] = {10, 45, 80, 115, 145};
 
 void DeleteMenuAdd()
 {
@@ -32,12 +35,12 @@ void CreateBox(int x, int y, string text, int length)
 	cout << char(200) << setw(length) << setfill(char(205)) << char(205) << char(188);
 }
 
-int xKeyDisplay[8] = { 5,25,45,65,85,95, 105, 115 };
+int xKeyDisplay[8] = { 5,25,50,65,85,100, 110, 120 };
 
 //---------------------------------------------------------------------------------------------
-string keyDisplayCreaditClass[7] = {"Ma Lop:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
+string keyDisplayCreditClass[7] = {"Ma Lop:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
 string keyDisplayCreaditClassEdit[6] = {"Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
-string keyDisplayStudent[7] = { "Ma SV:", "Ma Lop:","Ho:","Ten:","Phai:", "So DT:", "Nam NH:" };
+string keyDisplayStudent[6] = { "Ma SV:","Ho:","Ten:","Phai:", "So DT:", "Nam NH:" };
 string keyDisplaySubject[4] = {"Ma MH:", "Ten MH:", "So TCLT:", "So TCTH:"};
 // ---------------------------------------------------------------------------------------------
 
@@ -150,7 +153,7 @@ void DisplayEdit(string key[], int nKey,int length)
 	int yAdd = Y_ADD;
 	for (int i = 0; i < nKey; i++)
 	{
-		CreateBox(X_ADD + 15, yAdd,key[i],length);
+		CreateBox(X_ADD + 15 + 7, yAdd,key[i],length);
 		yAdd += 3;
 	}
 }

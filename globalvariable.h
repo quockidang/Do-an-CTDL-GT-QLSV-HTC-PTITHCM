@@ -18,7 +18,7 @@ int currposMainMenu = 0;
 int currposPreMainMenu = 0;
 
 
-
+unsigned int idCreditClass = 0;
 int currposSubject = 0;
 int totalPageSubject = 0;
 int pageNowSubject = 1;

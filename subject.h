@@ -2,14 +2,14 @@
 #ifndef _SUBJECT_H
 #define _SUBJECT_H
 
-#include "constant.h"
+
 #include "display.h"
 
 struct Subject{
 	int numberTheory; //so tin chi ly thuyet
 	int numberPractice; //so tin chi thuc hanh
 	char idSubject[10]; // ma mon hoc, key
-	char nameSubject[30]; //ten mon hoc
+	char nameSubject[25]; //ten mon hoc
 	
 };
 typedef struct Subject SUBJECT;
@@ -44,7 +44,7 @@ bool IsEmpty(TREE_SUBJECT t)
 }
 
 // check ma mon hoc da ton tai
-bool CheckIdExists(TREE_SUBJECT t, char idSubject[10] )
+bool CheckIdExists(TREE_SUBJECT t, char* idSubject )
 {
 	if(t != NULL)
 	{
@@ -58,11 +58,11 @@ bool CheckIdExists(TREE_SUBJECT t, char idSubject[10] )
 	return false;
 }
 
-TREE_SUBJECT FindSubject(TREE_SUBJECT t, char* id) //return p = null if not found
+NODE_SUBJECT* FindSubject(TREE_SUBJECT t, char* id) //return p = null if not found
 {
 	if(t != NULL)
 	{ 
-		TREE_SUBJECT p = t;
+		NODE_SUBJECT* p = t;
 		while(p != NULL)
 		{
 			if(strcmp(id, p->_subject.idSubject) == 0)
@@ -571,6 +571,9 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 						DisplayEdit(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string), 35);
 						inputSubject(t, k->_subject, true);
 						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
+						
+						key = _getch();
+						if(key == ESC) goto backMenu;
 					}
 					else if( key == PAGE_DOWN && pageNowSubject < totalPageSubject)
 					{

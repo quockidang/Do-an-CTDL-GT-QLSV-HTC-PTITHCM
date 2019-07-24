@@ -1,110 +1,8 @@
 #ifndef _CREDITCLASS_H
 #define _CREDITCLASS_H
-#include "validate.h"
+
+#include "registerstudent.h"
 #include "display.h"
-
-struct RegisterStudent {
-	char idStudent[10];
-	float point;
-};
-
-typedef struct RegisterStudent REGISTER_STUDENT;
-
-struct NodeRegisterStudent{
-	REGISTER_STUDENT _registerStudent;
-	struct NodeRegisterStudent* pNext;
-};
-typedef struct NodeRegisterStudent NODE_REGISTERSTUDENT;
-
-struct ListRegisterStudent{
-	int n = 0;
-	NODE_REGISTERSTUDENT *pHead, *pTail;
-};
-typedef struct ListRegisterStudent LIST_REGISTERSTUDENT;
-
-NODE_REGISTERSTUDENT* GetNodeRegisterStudent(REGISTER_STUDENT data)
-{
-	NODE_REGISTERSTUDENT* p = new NODE_REGISTERSTUDENT;
-	if(p == NULL)
-		return NULL;
-	p->_registerStudent = data;
-	p->pNext = NULL;
-	
-	return p;
-}
-
-void InitListRegisterStudent(LIST_REGISTERSTUDENT &l)
-{
-	l.pHead = l.pTail = NULL;
-}
-
-bool ListRegisterStudentIsEmty(LIST_REGISTERSTUDENT l)
-{
-	return l.pHead == NULL;
-}
-
-void AddHeadListRegister(LIST_REGISTERSTUDENT &l, REGISTER_STUDENT data)
-{
-	NODE_REGISTERSTUDENT* p = GetNodeRegisterStudent(data);
-	p->pNext = l.pHead;
-	l.pHead = p;
-	++l.n;
-}
-
-void AddTailListRegister(LIST_REGISTERSTUDENT &l, REGISTER_STUDENT data)
-{
-	NODE_REGISTERSTUDENT* p = GetNodeRegisterStudent(data);
-	if(l.pHead == NULL)
-	{
-		l.pHead = l.pTail = p;
-	}else
-	{
-		l.pTail->pNext = p;
-		l.pTail = p;
-	}
-	++l.n;	
-}
-
-NODE_REGISTERSTUDENT* FindRegisterStudent(LIST_REGISTERSTUDENT &l, char *id)
-{
-	if(l.pHead == NULL) return NULL;
-	for(NODE_REGISTERSTUDENT *p = l.pHead; p != NULL; p = p->pNext)
-	{
-		if (_strcmpi(p->_registerStudent.idStudent, id) == 0)
-			return p;
-	}
-	return NULL;
-}
-
-NODE_REGISTERSTUDENT* FindFlightByOrdinal(LIST_REGISTERSTUDENT l, int ordinal)
-{
-	if(l.pHead == NULL) return NULL;
-	if(l.n - 1 < ordinal) return NULL;
-	if(l.n - 1 == ordinal) return l.pTail;
-	if(ordinal == 0) return l.pHead;
-	
-	NODE_REGISTERSTUDENT *p = l.pHead;
-	int count = 0;
-	while(count != ordinal)
-	{
-		p = p->pNext;
-		count++;
-	}
-	return p;
-}
-
-int FindIndexRegister(LIST_REGISTERSTUDENT l, char* id)
-{
-	int index = -1;
-	if (l.pHead == NULL) return -1;
-	for (NODE_REGISTERSTUDENT *p = l.pHead; p != NULL; p = p->pNext)
-	{
-		++index;
-		if (_strcmpi(p->_registerStudent.idStudent, id) == 0)
-			return index;
-	}
-	return 0;
-}
 // define DS LTC
 
 struct CreditClass{
@@ -122,13 +20,13 @@ typedef struct CreditClass CREDITCLASS;
 typedef CREDITCLASS* PTR_CREDITCLASS;	 
 
 
-struct ListClass{
+struct ListCreaditClass{
 	
-	int n = 0;
+	int n = -1;
 	PTR_CREDITCLASS *listCreditClass = new PTR_CREDITCLASS[5000]; 
 };
-typedef struct ListClass LISTCLASS;
-typedef LISTCLASS* PTR_LISTCLASS;
+typedef struct ListCreaditClass LIST_CREDITCLASS;
+typedef LIST_CREDITCLASS* PTR_LISTCREDITCLASS;
 
 
 
@@ -136,10 +34,10 @@ typedef LISTCLASS* PTR_LISTCLASS;
  
  
  // Tim kiem lop dua tren id -- find class with id
-PTR_CREDITCLASS FindClass(PTR_LISTCLASS l, unsigned int id)
+PTR_CREDITCLASS FindCreditClass(PTR_LISTCREDITCLASS l, unsigned int id)
 {
 	if(l->n < 0) return NULL;
-	for(int i = 0; i< l->n; i++)
+	for(int i = 0; i <= l->n; i++)
 	{
 		if(l->listCreditClass[i]->idClass == id)
 			return l->listCreditClass[i];
@@ -148,24 +46,19 @@ PTR_CREDITCLASS FindClass(PTR_LISTCLASS l, unsigned int id)
 }
 
 // find index of class -- tim kiem index cua class
-int FindIndexClass(PTR_LISTCLASS l, unsigned int idClass)
+int FindIndexClass(PTR_LISTCREDITCLASS l, unsigned int idClass)
 {
 	if(l->n < 0) return -1;
-	for(int i = 0; i< l->n; i++)
+	for(int i = 0; i <= l->n; i++)
 	{
 		if(l->listCreditClass[i]->idClass == idClass)
-			return i;
-		return -1;
+			return i;		
 	}
+	return -1;
 }
 
 //check when input
-bool DataCreditClassIsEmty(PTR_CREDITCLASS cc)
-{
-	if(cc->group == cc->studentMin == cc->studentMax == cc->shoolYear == cc->semester == 0) return true;
-	if(strlen(cc->idSubject)  == 0 ) return true;
-	return false;
-}
+
 // Hoa vi hai lop
 void SwapClass(PTR_CREDITCLASS &a, PTR_CREDITCLASS &b)
 {
@@ -177,21 +70,21 @@ void SwapClass(PTR_CREDITCLASS &a, PTR_CREDITCLASS &b)
 
 void OutputCreditClass(PTR_CREDITCLASS cc, int ordinal) // ordinal == thu tu
 {
-	DeleteOldData(sizeof(keyDisplayCreaditClass) / sizeof(string), ordinal);
+	DeleteOldData(sizeof(keyDisplayCreditClass) / sizeof(string), ordinal);
 	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->idClass;
 	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->idSubject;
 	Gotoxy(xKeyDisplay[2] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->shoolYear;
 	Gotoxy(xKeyDisplay[3] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->semester;
 	Gotoxy(xKeyDisplay[4] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->group;
 	Gotoxy(xKeyDisplay[5] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->studentMax;
-	Gotoxy(xKeyDisplay[6] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->studentMax;
+	Gotoxy(xKeyDisplay[6] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->studentMin;
 	
 }
 
 
 
 
-void OutputListCredit(PTR_LISTCLASS l)
+void OutputListCredit(PTR_LISTCREDITCLASS l)
 {
 	if(l == NULL) return;
 	for(int i = 0; i <= l->n; i++)
@@ -200,7 +93,7 @@ void OutputListCredit(PTR_LISTCLASS l)
 	}
 }
 
-void OutputListCreditClassPerPage(PTR_LISTCLASS l, int indexBegin)
+void OutputListCreditClassPerPage(PTR_LISTCREDITCLASS l, int indexBegin)
 {
 	if(l == NULL) return;
 	for(int i = 0; i + indexBegin <= l->n && i < QUANTITY_PER_PAGE; i++)
@@ -211,7 +104,7 @@ void OutputListCreditClassPerPage(PTR_LISTCLASS l, int indexBegin)
 	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 }
 
-bool DeleteCreditClassIsSuccess(PTR_LISTCLASS &l, int id)
+bool DeleteCreditClassIsSuccess(PTR_LISTCREDITCLASS &l, unsigned int id)
 {
 	int index = FindIndexClass(l, id);
 	
@@ -226,7 +119,7 @@ bool DeleteCreditClassIsSuccess(PTR_LISTCLASS &l, int id)
 	return true;
 }
 
-void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = false) // nhap  Lop TC
+void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t, bool isEdited = false) // nhap  Lop TC
 {
 	ShowCur(true);
 	
@@ -234,8 +127,9 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 	int ordinal = 0;
 	bool isMoveUp = false;
 	bool isSave = false;
+	bool idIsExist = false;
 	
-	unsigned int id;
+	unsigned int id = ++idCreditClass;
 	string idSubject; // ma mon hoc
 	int shoolYear = 0; // nien khoa
 	int semester = 0; // hoc ki 
@@ -243,6 +137,7 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 	int studentMax = 0;
 	int studentMin = 0;
 	
+
 	
 	if(isEdited)
 	{
@@ -256,26 +151,23 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 		
 		// binding data;
 		
-		Gotoxy(X_ADD + 16, 0 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 20 + 7, 0 * 3 + Y_ADD);
 		cout << idSubject;
 		
-		Gotoxy(X_ADD + 13, 1 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 17 + 7, 1 * 3 + Y_ADD);
 		cout << shoolYear;
 		
-		Gotoxy(X_ADD + 18, 2 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 21 + 7, 2 * 3 + Y_ADD);
 		cout << semester;
 		
-		Gotoxy(X_ADD + 15, 3 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 19 + 7, 3 * 3 + Y_ADD);
 		cout << group;
 		
-		Gotoxy(X_ADD + 16, 4 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 20 + 7, 4 * 3 + Y_ADD);
 		cout << studentMax;
 		
-		Gotoxy(X_ADD + 16, 5 * 3 + Y_ADD);
-		cout << studentMin;
-		
-		
-		
+		Gotoxy(X_ADD + 20 + 7, 5 * 3 + Y_ADD);
+		cout << studentMin;		
 	}
 	
 	
@@ -285,23 +177,30 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 		{
 											
 			case 0:
-				CheckMoveAndValidateID(idSubject, isMoveUp, ordinal, isSave, 20, 10);
+				CheckMoveAndValidateID(idSubject, isMoveUp, ordinal, isSave, 27, 10);
+				if(FindSubject(t, (char*)idSubject.c_str()) == NULL)
+				{
+					idIsExist = false;
+					break;
+				}
+				else
+					idIsExist = true;
 				break;
 				
 			case 1:
-				CheckMoveAndValidateNumber(shoolYear,isMoveUp, ordinal, isSave,17, 2019);
+				CheckMoveAndValidateNumber(shoolYear,isMoveUp, ordinal, isSave,24, 2019);
 				break;
 			case 2:
-				CheckMoveAndValidateNumber(semester,isMoveUp, ordinal, isSave,21, 3);
+				CheckMoveAndValidateNumber(semester,isMoveUp, ordinal, isSave,28, 3);
 				break;
 			case 3:
-				CheckMoveAndValidateNumber(group,isMoveUp, ordinal, isSave,19, 3);
+				CheckMoveAndValidateNumber(group,isMoveUp, ordinal, isSave,26, 3);
 				break;
 			case 4:
-				CheckMoveAndValidateNumber(studentMax,isMoveUp, ordinal, isSave,20, MAX_STUDENT);
+				CheckMoveAndValidateNumber(studentMax,isMoveUp, ordinal, isSave,27, MAX_STUDENT);
 				break;
 			case 5:
-				CheckMoveAndValidateNumber(studentMin,isMoveUp, ordinal, isSave,20, MIN_STUDENT);
+				CheckMoveAndValidateNumber(studentMin,isMoveUp, ordinal, isSave,27, MIN_STUDENT);
 				break;				
 		}
 		
@@ -320,47 +219,51 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 		}
 		if (isSave)
 		{
-			Gotoxy(X_NOTIFY, Y_NOTIFY);
+			Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 			cout << setw(50) << setfill(' ') << " ";
-			PTR_CREDITCLASS temp = new CREDITCLASS;
-			id = ++l->n;
-			strcpy(temp->idSubject, idSubject.c_str());
-			temp->idClass = id;
-			temp->semester = semester;
-			temp->shoolYear = shoolYear;
-			temp->studentMax = studentMax;
-			temp->studentMin = studentMin;
-			temp->group = group;
-			if(DataCreditClassIsEmty(temp))
+			if(!idIsExist)
 			{
-				Gotoxy(X_NOTIFY, Y_NOTIFY);
-				cout << "Cac truong du lieu khong dc de trong";
-			}
-			else
+				Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
+				cout << "Ma MH KHONG TON TAI";
+			}else
 			{
-				strcpy(cc->idSubject, idSubject.c_str());
-				cc->idClass = id;
-				cc->group = group;
-				cc->shoolYear = shoolYear;
-				cc->studentMax = studentMax;
-				cc->studentMin = studentMin;
-				cc->semester = semester;
+				PTR_CREDITCLASS temp = new CREDITCLASS;
+				strcpy(temp->idSubject, idSubject.c_str());
+				temp->idClass = id;
+				temp->semester = semester;
+				temp->shoolYear = shoolYear;
+				temp->studentMax = studentMax;
+				temp->studentMin = studentMin;
+				temp->group = group;
 				
-				if(isEdited)
-				{
-					int index = FindIndexClass(l, cc->idClass);
-					l->listCreditClass[index] = cc;
-				}else
-				{
-					InitListRegisterStudent(cc->listRegisterStudent);
-					l->listCreditClass[l->n] = new CREDITCLASS;
-					l->listCreditClass[l->n] = cc;
-				}
-				DeleteMenuAdd();
-				totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
-				return;
-			}
+				
 			
+				
+					strcpy(cc->idSubject, idSubject.c_str());
+					cc->idClass = id;
+					cc->group = group;
+					cc->shoolYear = shoolYear;
+					cc->studentMax = studentMax;
+					cc->studentMin = studentMin;
+					cc->semester = semester;
+					
+					if(isEdited)
+					{
+						int index = FindIndexClass(l, cc->idClass);
+						l->listCreditClass[index] = cc;
+					}else
+					{
+						InitListRegisterStudent(cc->listRegisterStudent);
+						l->listCreditClass[++l->n] = new CREDITCLASS;
+						l->listCreditClass[l->n] = cc;
+					}
+					DeleteMenuAdd();
+					totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
+					return;
+				
+				
+			}
+			isSave = false;
 		}
 		isSave = false;
 	}
@@ -370,26 +273,26 @@ void InputCreditClass(PTR_LISTCLASS &l, PTR_CREDITCLASS cc, bool isEdited = fals
 }
 
 
-void SetDefaultChosenCreditClass(PTR_LISTCLASS l, int ordinal)
+void SetDefaultChosenCreditClass(PTR_LISTCREDITCLASS l, int ordinal)
 {
 	SetBGColor(GREEN);
 	OutputCreditClass(l->listCreditClass[ordinal], (ordinal % QUANTITY_PER_PAGE) * 2);
 	SetBGColor(PURPLE);
 }
 
-void EffectiveMenuCreditClass(int ordinal, PTR_LISTCLASS l)
+void EffectiveMenuCreditClass(int ordinal, PTR_LISTCREDITCLASS l)
 {
 	int current = ordinal;
 	SetDefaultChosenCreditClass(l, current);
-	OutputCreditClass(l->listCreditClass[currposPrecCreditClass], (currposPrecCreditClass * QUANTITY_PER_PAGE) * 2);
+	OutputCreditClass(l->listCreditClass[currposPrecCreditClass], (currposPrecCreditClass % QUANTITY_PER_PAGE) * 2);
 	currposPrecCreditClass = current;
 }
 
-void ChangePageCreditClass( PTR_LISTCLASS l)
+void ChangePageCreditClass( PTR_LISTCREDITCLASS l)
 {
 	clrscr();
-	Display(keyDisplayCreaditClass, sizeof(keyDisplayCreaditClass) / sizeof(string));
-	DeleteNote(sizeof(keyDisplayCreaditClass) / sizeof(string));
+	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
+	DeleteNote(sizeof(keyDisplayCreditClass) / sizeof(string));
 	currposCreditClass = (pageNowCreditClass - 1) * QUANTITY_PER_PAGE;
 	currposPrecCreditClass = (pageNowCreditClass - 1) * QUANTITY_PER_PAGE;
 	
@@ -397,7 +300,7 @@ void ChangePageCreditClass( PTR_LISTCLASS l)
 	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 }
 
-int ChooseCreditClass(PTR_LISTCLASS l)
+int ChooseCreditClass(PTR_LISTCREDITCLASS l)
 {
 	ShowCur(false);
 	int key;
@@ -405,6 +308,8 @@ int ChooseCreditClass(PTR_LISTCLASS l)
 	pageNowCreditClass = 1;
 	currposCreditClass = 0;
 	currposPrecCreditClass = 0;
+	clrscr();
+	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 	OutputListCreditClassPerPage(l, 0);
 	SetDefaultChosenCreditClass(l, currposCreditClass);
 	
@@ -440,6 +345,15 @@ int ChooseCreditClass(PTR_LISTCLASS l)
 						SetDefaultChosenCreditClass(l, currposCreditClass);
 					}
 					break;
+				case PAGE_DOWN:
+					if(pageNowCreditClass < totalPageCreditClass)
+					{
+						pageNowCreditClass++;
+						ChangePageCreditClass(l);
+						OutputListCreditClassPerPage(l, (pageNowCreditClass -1) * QUANTITY_PER_PAGE);
+						SetDefaultChosenCreditClass(l, currposCreditClass);		
+					}
+					break;	
 				case ESC:
 					ShowCur(false);
 					return -1;
@@ -453,27 +367,31 @@ int ChooseCreditClass(PTR_LISTCLASS l)
 	}
 }
 
-void ChangePageManageCreaditClass(PTR_LISTCLASS l)
+void ChangePageManageCreaditClass(PTR_LISTCREDITCLASS l)
 {
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
 	OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
-	Display(keyDisplayCreaditClass, sizeof(keyDisplayCreaditClass) / sizeof(string));
+	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 }
 
-void MenuManageCreditClass(PTR_LISTCLASS &l)
+void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 {
 	backMenu:
 		clrscr();
 		pageNowCreditClass = 1;
 		
-		OutputListCreditClassPerPage(l, 0);
-		Display(keyDisplayCreaditClass, sizeof(keyDisplayCreaditClass) / sizeof(string));
+		if(l->n != -1)
+		{
+			OutputListCreditClassPerPage(l, 0);
+		}
+		
+		Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 		int key;
 		
 		Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
 		Gotoxy(X_PAGE, Y_PAGE);
-		
+		cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 		while(true)
 		{
 			while(_kbhit())
@@ -486,17 +404,27 @@ void MenuManageCreditClass(PTR_LISTCLASS &l)
 					{
 						PTR_CREDITCLASS cc = new CREDITCLASS;
 						DisplayEdit(keyDisplayCreaditClassEdit, sizeof(keyDisplayCreaditClassEdit) / sizeof(string), 35);
-						InputCreditClass(l, cc);
+						InputCreditClass(l, cc, t);
+						clrscr();
+						
+						Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
+	
+		
+						Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
+						Gotoxy(X_PAGE, Y_PAGE);
+						cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 						totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
 						pageNowCreditClass = 1;
 						OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
-						Gotoxy(X_NOTIFY, Y_NOTIFY);
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 						cout << "THEM THANH CONG!";
 					}
 					else if(key == KEY_F3)
 					{
+						
 						int k = ChooseCreditClass(l);
 						if(k == -1) goto backMenu;
+						Gotoxy(X_NOTIFY, Y_NOTIFY);
 						cout << "BAN CO CHAC CHAN XOA? ENTER DE DONG Y";
 						key = _getch();
 						
@@ -508,16 +436,16 @@ void MenuManageCreditClass(PTR_LISTCLASS &l)
 							bool isDeleted = DeleteCreditClassIsSuccess(l, l->listCreditClass[k]->idClass);
 							if(!isDeleted)
 							{
-								Gotoxy(X_NOTIFY, Y_NOTIFY);
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 								cout << "Xoa that bai."<<endl;
-								Gotoxy(X_NOTIFY, Y_NOTIFY+1);
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY+1);
 								cout << "Nhap phim bat ky de tiep tuc ";
 								_getch();
 								goto backMenu;		
 							}else
 							{
 								clrscr();
-								DisplayEdit(keyDisplayCreaditClass, sizeof(keyDisplayCreaditClass) / sizeof(string), 35);
+								Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 								if((l->n + 1) % QUANTITY_PER_PAGE == 0) pageNowCreditClass--;
 								totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
 								OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);	
@@ -530,10 +458,10 @@ void MenuManageCreditClass(PTR_LISTCLASS &l)
 						int k = ChooseCreditClass(l);
 						if(k == -1) goto backMenu;
 						Gotoxy(X_ADD, 40);
-						DisplayEdit(keyDisplayCreaditClass, sizeof(keyDisplayCreaditClass) / sizeof(string), 35);
-						InputCreditClass(l, l->listCreditClass[k], true);
+						DisplayEdit(keyDisplayCreaditClassEdit, sizeof(keyDisplayCreaditClassEdit) / sizeof(string), 35);
+						InputCreditClass(l, l->listCreditClass[k], t, true);
 						OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
-						Gotoxy(X_NOTIFY, Y_NOTIFY);
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 						cout << "SUA THANH CONG";
 					}
 					else if(key == PAGE_DOWN && pageNowCreditClass < totalPageCreditClass)
