@@ -194,7 +194,7 @@ void CheckMoveAndValidateName(string &result, bool &isMove, int &ordinal, bool &
 	}//true
 }
 
-void CheckMoveAndValidateNameSubject(string &result, bool &isMove, int &ordinal, bool &isSave, int distance)
+void CheckMoveAndValidateNameSubject(string &result, bool &isMove, int &ordinal, bool &isSave, int distance, int condition)
 {
 	int lengh = result.length();
 	Gotoxy(X_ADD + distance, ordinal * 3 + Y_ADD);
@@ -210,7 +210,7 @@ void CheckMoveAndValidateNameSubject(string &result, bool &isMove, int &ordinal,
 			{
 				if ((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key == SPACE || (key >= 48 && key <= 57) || key == 46 )
 				{
-					if (count < 25)
+					if (count < condition)
 					{
 						count++;
 						if (!isSpaced && key == SPACE)

@@ -354,10 +354,10 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 				
 				break;
 			case 1:
-				CheckMoveAndValidateNameSubject(firstName, isMoveUp, ordinal, isSave, 17);
+				CheckMoveAndValidateNameSubject(firstName, isMoveUp, ordinal, isSave, 17, 10);
 				break;
 			case 2:
-				CheckMoveAndValidateNameSubject(lastName, isMoveUp, ordinal, isSave, 18);
+				CheckMoveAndValidateNameSubject(lastName, isMoveUp, ordinal, isSave, 18, 20);
 				break;
 			case 3:
 				CheckMoveAndValidateNumber(sex, isMoveUp, ordinal, isSave, 19, 2);

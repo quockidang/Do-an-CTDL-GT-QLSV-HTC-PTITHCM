@@ -58,16 +58,16 @@ bool CheckIdExists(TREE_SUBJECT t, char* idSubject )
 	return false;
 }
 
-NODE_SUBJECT* FindSubject(TREE_SUBJECT t, char* id) //return p = null if not found
+NODE_SUBJECT* FindSubject(TREE_SUBJECT t, char* idSubject) //return p = null if not found
 {
 	if(t != NULL)
 	{ 
 		NODE_SUBJECT* p = t;
 		while(p != NULL)
 		{
-			if(strcmp(id, p->_subject.idSubject) == 0)
+			if(strcmp(idSubject, p->_subject.idSubject) == 0)
 				return p;
-			else if(strcmp(id, p->_subject.idSubject) > 0)
+			else if(strcmp(idSubject, p->_subject.idSubject) > 0)
 				p = p->pRight;
 			else
 				p = p->pLeft;
@@ -375,13 +375,13 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 		numberPractice = data.numberPractice;
 		numberTheory = data.numberTheory;
 		
-		Gotoxy(X_ADD + 20, 0 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 20 + 7, 0 * 3 + Y_ADD);
 		cout << id;
-		Gotoxy(X_ADD + 21, 1 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 21 + 7, 1 * 3 + Y_ADD);
 		cout << name;
-		Gotoxy(X_ADD + 22, 2 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 22 + 7, 2 * 3 + Y_ADD);
 		cout << numberPractice;
-		Gotoxy(X_ADD + 22, 3 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 22 + 7, 3 * 3 + Y_ADD);
 		cout << numberTheory;		
 	}
 	
@@ -391,7 +391,7 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 		{
 			case 0:
 				if(isEdited) break;
-				CheckMoveAndValidateID(id, isMoveUp, ordinal, isSave, 20, 10);
+				CheckMoveAndValidateID(id, isMoveUp, ordinal, isSave, 20 + 7, 10);
 				
 				strcpy(data.idSubject, id.c_str());
 				
@@ -403,13 +403,13 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 				idIsExits = true;
 				break;
 			case 1:
-				CheckMoveAndValidateNameSubject(name, isMoveUp, ordinal, isSave, 21);
+				CheckMoveAndValidateNameSubject(name, isMoveUp, ordinal, isSave, 21 + 7, 25);
 				break;
 			case 2:
-				CheckMoveAndValidateNumber(numberTheory,isMoveUp, ordinal, isSave,22, 4);
+				CheckMoveAndValidateNumber(numberTheory,isMoveUp, ordinal, isSave,22 + 7, 4);
 				break;
 			case 3:
-				CheckMoveAndValidateNumber(numberPractice,isMoveUp, ordinal, isSave,22,  4);
+				CheckMoveAndValidateNumber(numberPractice,isMoveUp, ordinal, isSave,22 + 7,  4);
 		}
 		
 		if (isMoveUp)

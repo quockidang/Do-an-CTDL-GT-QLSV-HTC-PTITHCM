@@ -35,7 +35,7 @@ void CreateBox(int x, int y, string text, int length)
 	cout << char(200) << setw(length) << setfill(char(205)) << char(205) << char(188);
 }
 
-int xKeyDisplay[8] = { 5,25,50,65,85,100, 110, 120 };
+int xKeyDisplay[8] = { 5,25,55,65,85,100, 110, 120 };
 
 //---------------------------------------------------------------------------------------------
 string keyDisplayCreditClass[7] = {"Ma Lop:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
