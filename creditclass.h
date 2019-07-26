@@ -27,12 +27,10 @@ struct ListCreaditClass{
 };
 typedef struct ListCreaditClass LIST_CREDITCLASS;
 typedef LIST_CREDITCLASS* PTR_LISTCREDITCLASS;
-
-
-
  //.................define List class.....................
  
- 
+
+ //-----------------define temp
  // Tim kiem lop dua tren id -- find class with id
 PTR_CREDITCLASS FindCreditClass(PTR_LISTCREDITCLASS l, unsigned int id)
 {
@@ -236,30 +234,29 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t
 				temp->studentMin = studentMin;
 				temp->group = group;
 				
+	
+				strcpy(cc->idSubject, idSubject.c_str());
+				cc->idClass = id;
+				cc->group = group;
+				cc->shoolYear = shoolYear;
+				cc->studentMax = studentMax;
+				cc->studentMin = studentMin;
+				cc->semester = semester;
 				
-			
-				
-					strcpy(cc->idSubject, idSubject.c_str());
-					cc->idClass = id;
-					cc->group = group;
-					cc->shoolYear = shoolYear;
-					cc->studentMax = studentMax;
-					cc->studentMin = studentMin;
-					cc->semester = semester;
-					
-					if(isEdited)
-					{
-						int index = FindIndexClass(l, cc->idClass);
-						l->listCreditClass[index] = cc;
-					}else
-					{
-						InitListRegisterStudent(cc->listRegisterStudent);
-						l->listCreditClass[++l->n] = new CREDITCLASS;
-						l->listCreditClass[l->n] = cc;
-					}
-					DeleteMenuAdd();
-					totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
-					return;
+				if(isEdited)
+				{
+					int index = FindIndexClass(l, cc->idClass);
+					l->listCreditClass[index] = cc;
+				}else
+				{
+					InitListRegisterStudent(cc->listRegisterStudent);
+					l->listCreditClass[++l->n] = new CREDITCLASS;
+					l->listCreditClass[l->n] = cc;
+									
+				}
+				DeleteMenuAdd();
+				totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
+				return;
 				
 				
 			}
@@ -407,15 +404,14 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 						InputCreditClass(l, cc, t);
 						clrscr();
 						
-						Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
-	
-		
+						Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));		
 						Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
-						Gotoxy(X_PAGE, Y_PAGE);
-						cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
+					
 						totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
 						pageNowCreditClass = 1;
 						OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
+						Gotoxy(X_PAGE, Y_PAGE);
+						cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 						Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 						cout << "THEM THANH CONG!";
 					}
@@ -445,10 +441,19 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 							}else
 							{
 								clrscr();
+								Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
+								Gotoxy(X_PAGE, Y_PAGE);
+								cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 								Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 								if((l->n + 1) % QUANTITY_PER_PAGE == 0) pageNowCreditClass--;
 								totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
-								OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);	
+								OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
+								
+								Gotoxy(X_PAGE, Y_PAGE);
+								cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;	
+								
+								Gotoxy(X_NOTIFY, Y_NOTIFY);
+								cout << "Xoa thanh cong";
 							}
 						}else
 							goto backMenu;
@@ -460,7 +465,14 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 						Gotoxy(X_ADD, 40);
 						DisplayEdit(keyDisplayCreaditClassEdit, sizeof(keyDisplayCreaditClassEdit) / sizeof(string), 35);
 						InputCreditClass(l, l->listCreditClass[k], t, true);
+						
+						clrscr();
+						Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";						
+						Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 						OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
+						
+						Gotoxy(X_PAGE, Y_PAGE);
+						cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 						Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 						cout << "SUA THANH CONG";
 					}

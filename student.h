@@ -5,9 +5,9 @@
 struct student{
 	char idStudent[12];
 	char idClass[15];
-	char fistName[10], lastName[20];
+	char fistName[20], lastName[10];
 	int sex = 1; // 1 male, 2 female
-	char phoneNUmber[13];
+	char phoneNUmber[12];
 	int yearAdmission; // nam nhap hoc
 };
 typedef struct student STUDENT;
@@ -324,17 +324,17 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		sex = st.sex;
 		
 		
-		Gotoxy(X_ADD  + 20, 0 * 3 + Y_ADD);
+		Gotoxy(X_ADD  + 20 + 7, 0 * 3 + Y_ADD);
 		cout << idStudent;
-		Gotoxy(X_ADD + 17, 1 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 17 + 7, 1 * 3 + Y_ADD);
 		cout << firstName;
-		Gotoxy(X_ADD + 18, 2 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 18 + 7, 2 * 3 + Y_ADD);
 		cout << lastName;		
-		Gotoxy(X_ADD + 19, 3 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 19 + 7, 3 * 3 + Y_ADD);
 		cout << sex;
-		Gotoxy(X_ADD + 20, 4 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 20 + 7, 4 * 3 + Y_ADD);
 		cout << phoneNumber;
-		Gotoxy(X_ADD + 21, 5 * 3 + Y_ADD);
+		Gotoxy(X_ADD + 21 + 7, 5 * 3 + Y_ADD);
 		cout << yearAdmission;		
 	}
 		
@@ -354,19 +354,19 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 				
 				break;
 			case 1:
-				CheckMoveAndValidateNameSubject(firstName, isMoveUp, ordinal, isSave, 17, 10);
+				CheckMoveAndValidateNameSubject(firstName, isMoveUp, ordinal, isSave, 17 + 7, 20);
 				break;
 			case 2:
-				CheckMoveAndValidateNameSubject(lastName, isMoveUp, ordinal, isSave, 18, 20);
+				CheckMoveAndValidateNameSubject(lastName, isMoveUp, ordinal, isSave, 18 + 7, 10);
 				break;
 			case 3:
-				CheckMoveAndValidateNumber(sex, isMoveUp, ordinal, isSave, 19, 2);
+				CheckMoveAndValidateNumber(sex, isMoveUp, ordinal, isSave, 19 + 7, 2);
 				break;
 			case 4:
-				CheckMoveAndValidateID(phoneNumber, isMoveUp, ordinal, isSave, 20, 11);
+				CheckMoveAndValidateID(phoneNumber, isMoveUp, ordinal, isSave, 20 + 7, 11);
 				break;
 			case 5:
-				CheckMoveAndValidateNumber(yearAdmission, isMoveUp, ordinal, isSave, 21, 2019);
+				CheckMoveAndValidateNumber(yearAdmission, isMoveUp, ordinal, isSave, 21 + 7, 2019);
 				break;	
 		}
 		

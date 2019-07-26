@@ -7,32 +7,25 @@ int main()
  {
 	
 	system("color 5A");	
-//	fullscreen();
+	fullscreen();
+	
+	PTR_LISTCREDITCLASS listCC = new LIST_CREDITCLASS;
+	LoadCreditClassFromFile(listCC);
+	
 	TREE_SUBJECT t;
 	InitTreeSubject(t);
-//	LoadSubjectFormFile(t);
-//	MenuSubjectManager(t);
-//	SaveSubjectToFile(t);
+	LoadSubjectFormFile(t);
 	
-	SUBJECT sj;
+	LIST_STUDENT l;
+	InitListStudent(l);
+	LoadStudentFromFile(l);
 	
-	string id = "mh0123";
 	
-	string name = "ctdl&gt";
-	//sj.idSubject = "mh0123";
-	//sj.nameSubject ="ctdl&gt";
-	strcpy(sj.idSubject, id.c_str());
-	strcpy(sj.nameSubject, name.c_str());
-	sj.numberPractice =1;
-	sj.numberTheory = 3;
-	InsertSubjectToTree(t, sj);
+	MergeAll(listCC, t, l);
 	
-	TREE_SUBJECT temp;
-	temp = FindSubject(t, strcpy(sj.idSubject, id.c_str()));
-	cout << temp->_subject.idSubject;
-	
-//	PTR_LISTCREDITCLASS l = new LIST_CREDITCLASS;
-	//MenuManageCreditClass(l)
-			                  
+	SaveCreditClassToFile(listCC);
+	SaveStudentToFile(l);
+	SaveSubjectToFile(t);
+		                  
 	return 0;
 }

@@ -7,6 +7,30 @@
 #include "student.h"
 
 //------------------------------------DATABASE------------------------------------------
+//void LoadCreditClass(PTR_LISTCREDITCLASS &pList)
+//{
+//	int sizeRegisterStudent = sizeof(REGISTER_STUDENT) - sizeof(string);
+//	int sizeCreditClass = sizeof(CREDITCLASS) - sizeof(LIST_REGISTERSTUDENT);
+//	
+//	fstream filedata("DSLTC.txt", ios::in);
+//	while(!filedata.eof())
+//	{
+//		pList->listCreditClass[++pList->n] = new CREDITCLASS;
+//		filedata.read(reinterpret_cast<char*>(pList->listCreditClass[pList->n]), sizeCreditClass);
+//		InitListRegisterStudent(pList->listCreditClass[pList->n]->listRegisterStudent);
+//		
+//		int nRegisterStudent = pList->listCreditClass[pList->n]->listRegisterStudent->n;
+//	}
+//}
+
+
+
+
+
+
+
+
+
 void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
 {
 	file << cc->idSubject<< endl;
@@ -54,7 +78,7 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 	int nCreditClass, nRegisterStudent;
 	
 	
-	inFile.open("DSLTC.txt", ios::in);
+	inFile.open("DSLCT.txt", ios::in);
 	
 	if(inFile.is_open())
 	{
@@ -63,9 +87,8 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 		getline(inFile, temp);
 		for(int i = 0; i <= nCreditClass; i++)
 		{
+		
 			l->listCreditClass[i] = new CREDITCLASS;
-			if(l->listCreditClass[i] == NULL) continue;
-			
 			// load thong tin vao LTC
 			inFile.getline(l->listCreditClass[i]->idSubject, 10, '\n');
 			inFile >> l->listCreditClass[i]->idClass;
@@ -88,7 +111,8 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 				AddTailListRegister(l->listCreditClass[i]->listRegisterStudent, rs);
 			}			
 			
-			delete l->listCreditClass[i];
+			++l->n;
+			//delete l->listCreditClass[i];
 		}
 	}
 	
@@ -223,8 +247,8 @@ void LoadStudentFromFile(LIST_STUDENT &l)
 			getline(inFile, temp);
 			inFile.getline(st.idClass, 15, '\n');
 			inFile.getline(st.idStudent, 12, '\n');
-			inFile.getline(st.fistName, 10, '\n');
-			inFile.getline(st.lastName, 20, '\n');
+			inFile.getline(st.fistName, 20, '\n');
+			inFile.getline(st.lastName, 10, '\n');
 			inFile.getline(st.phoneNUmber, 12, '\n');
 			inFile >> st.yearAdmission;
 			inFile >> st.sex;
@@ -238,6 +262,185 @@ void LoadStudentFromFile(LIST_STUDENT &l)
 
 	inFile.close();
 }
+// -------------------------------End Database----------------------------------------
+
+void input(string &idSubject, int &shoolYear, int &semester, int &group, TREE_SUBJECT t)
+{
+	int ordinal = 0;
+	bool isMoveUp = false;
+	bool isSave = false;
+	bool idIsExist = false;
+	Gotoxy(X_NOTIFY, Y_NOTIFY + 1); cout << "An F10 de hoan tat viec nhap data";
+	
+	while(true)
+	{
+		switch(ordinal)
+		{
+											
+			case 0:
+				CheckMoveAndValidateID(idSubject, isMoveUp, ordinal, isSave, 27, 10);
+				if(FindSubject(t, (char*)idSubject.c_str()) == NULL)
+				{
+					idIsExist = false;
+					break;
+				}
+				else
+					idIsExist = true;
+				break;
+				
+			case 1:
+				CheckMoveAndValidateNumber(shoolYear,isMoveUp, ordinal, isSave,24, 2019);
+				break;
+			case 2:
+				CheckMoveAndValidateNumber(semester,isMoveUp, ordinal, isSave,24, 3);
+				break;
+			case 3:
+				CheckMoveAndValidateNumber(group,isMoveUp, ordinal, isSave,26, 3);
+				break;
+						
+		}
+		
+		if (isMoveUp)
+		{
+			if (ordinal == 0)
+				isMoveUp = false;
+			ordinal--;
+
+		}
+		else
+		{
+			if (ordinal == 3)
+				isMoveUp = true;
+			ordinal++;
+		}
+		if (isSave)
+		{
+			Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
+			cout << setw(50) << setfill(' ') << " ";
+			if(!idIsExist)
+			{
+				Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
+				cout << "Ma MH KHONG TON TAI";
+			}
+			else if(idSubject.empty() || semester == 0 || shoolYear == 0 || group == 0)
+			{
+				Gotoxy(X_NOTIFY, Y_NOTIFY - 1);
+				cout << "Cac truong du lieu khong dc de trong";
+			}
+			else
+			{
+				DeleteMenuAdd();
+				return;
+			}
+		
+			
+		}
+		isSave = false;
+	}
+}
+
+PTR_CREDITCLASS FindCrediClassWithCondition(PTR_LISTCREDITCLASS l, char* idSubject, int shoolYear, int semester, int group)
+{
+	PTR_LISTCREDITCLASS temp = new LIST_CREDITCLASS;
+	for(int i = 0; i <= l->n; i++)
+	{
+		if(l->listCreditClass[i]->idSubject == idSubject)
+		{
+			temp->listCreditClass[++temp->n] = l->listCreditClass[i];
+		}
+	}
+	
+	for(int j = 0; j <= temp->n; j++)
+	{
+		if(temp->listCreditClass[j]->shoolYear = shoolYear && temp->listCreditClass[j]->semester == semester && temp->listCreditClass[j]->group == group)
+			return temp->listCreditClass[j];
+	}
+}
+
+
+bool StatisticStudentOnCreditClassIsSucceed(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
+{
+	
+	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP THON TIN DE KET XUAT DSSV";
+	DisplayEdit(keyFindCreditClass, sizeof(keyFindCreditClass) / sizeof(string), 35);
+	string id;
+	int schoolYear = 0, semester = 0, group = 0;
+	
+	input(id, schoolYear, semester, group, t);
+	char* idSubject;
+	strcpy(idSubject, id.c_str());
+	PTR_CREDITCLASS temp = FindCrediClassWithCondition(l, idSubject, schoolYear, semester, group);
+	
+	clrscr();
+		
+	_getch();
+	return true;
+}
+
+
+
+
+void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
+{
+	while(true)
+	{
+		MainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
+		
+		int type = ChooseMainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
+		
+		totalPageCreditClass = pListCC->n / QUANTITY_PER_PAGE + 1;
+		totalPageSubject = nSubject / QUANTITY_PER_PAGE + 1;
+		totalPageStudent = l.n / QUANTITY_PER_PAGE + 1;
+		
+		switch(type)
+		{
+			case -1:
+				return;
+			case 0:
+				MenuManageCreditClass(pListCC, t);
+				break;
+			case 1:
+				clrscr();
+				MenuManagerStudent(l);
+				break;
+				
+			case 2:
+				clrscr();				
+				MenuSubjectManager(t);
+				break;
+			case 3:
+				clrscr();
+				MainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
+				int chosenStatistic = ChooseMainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
+				
+				switch(chosenStatistic)
+				{
+					case 0:
+						clrscr();
+						if(StatisticStudentOnCreditClassIsSucceed(pListCC, t) == false) continue;
+						break;
+				}
+				
+				
+		}
+		
+		clrscr();
+	}// while true
+}// void
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif
 
