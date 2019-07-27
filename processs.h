@@ -541,7 +541,8 @@ backMenu:
 	Gotoxy(X_TITLE, Y_TITLE); cout << "DANG KI LOP TIN CHI";
 	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 	OutputListCreditClassPerPage(temp, t, 0);
-	
+	Gotoxy(X_NOTIFY - 6, Y_NOTIFY);
+	cout << setw(50) << setfill(' ') << " ";
 	Gotoxy(X_PAGE, Y_PAGE);
 	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 	
@@ -551,30 +552,44 @@ backMenu:
 		return false;
 		clrscr();
 	} 
+	
 	Gotoxy(X_NOTIFY - 6 , Y_NOTIFY);
-	cout << "Ban co chac chan dang ky lop nay! an ENTER de dong y";			
-	while(true)
+	cout << "Ban co muon dang ky LTC nay khong! An ENTER neu dong y";
+	
+	key = _getch();
+	
+	if(key == ENTER)
 	{
-		while(_kbhit())
+		Gotoxy(X_NOTIFY - 6, Y_NOTIFY);
+		cout << setw(50) << setfill(' ') << " ";
+		
+		int res = FindCreditClassWithIdSubject(lcc, temp->listCreditClass[k]->idSubject);		
+		REGISTER_STUDENT rs;
+		strcpy(rs.idStudent,(char*)idStudent.c_str());	
+		rs.point = 0;
+		
+		AddTailListRegister(lcc->listCreditClass[res]->listRegisterStudent, rs);
+		DeleteCreditClass(temp, temp->listCreditClass[k]->idClass);
+		
+		clrscr();
+		Gotoxy(X_TITLE, Y_TITLE); cout << "DANG KI LOP TIN CHI";
+		Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
+		
+		if((temp->n + 1) % QUANTITY_PER_PAGE == 0) pageNowCreditClass--;
+		totalPageCreditClass = temp->n / QUANTITY_PER_PAGE + 1;
+		OutputListCreditClassPerPage(temp, t, (pageNowCreditClass -1) * QUANTITY_PER_PAGE);
+	
+		Gotoxy(X_PAGE, Y_PAGE);
+		cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
+	
+		Gotoxy(X_NOTIFY - 6 , Y_NOTIFY);
+		cout << "Dang Ki Thanh Cong! An F2 de tiep tuc, ESC de thoat";
+		key = _getch();
+		if(key == KEY_F2)
 		{
-			key = _getch();
-			if(key == ENTER)
-			{
-				Gotoxy(X_NOTIFY - 6, Y_NOTIFY);
-				cout << setw(50) << setfill(' ') << " ";
-				
-				int res = FindCreditClassWithIdSubject(lcc, temp->listCreditClass[k]->idSubject);		
-				REGISTER_STUDENT rs;
-				strcpy(rs.idStudent,(char*)idStudent.c_str());	
-				rs.point = 0;	
-				AddTailListRegister(lcc->listCreditClass[res]->listRegisterStudent, rs);
-				Gotoxy(X_NOTIFY - 6 , Y_NOTIFY);
-				cout << "Dang Ki Thanh Cong!";
-				DeleteCreditClass(temp, temp->listCreditClass[k]->idClass);
-				goto backMenu;
-			}else if(key == ESC) return true;
-				
-		}
+			goto backMenu;
+		}else if(key == ESC) return true;
+		
 	}			
 }
 
