@@ -7,7 +7,7 @@
 
 
 // main menu .....
-string keyMainMenu[4] = {"Lop Tin Chi", "Sinh Vien", "Mon Hoc","Thong Ke"};
+string keyMainMenu[5] = {"Lop Tin Chi", "Sinh Vien", "Mon Hoc", "Dang Ki LTC", "Thong Ke"};
 string keyStatistic[5] = {"DSSV  LTC", "DSSV LOP", "Ban Diem Mon Hoc", "Diem TB Khoa Hoc", "Ban Diem Tong ket" };
 
 int xMainMenu[5] = {10, 45, 80, 115, 145};
@@ -113,16 +113,17 @@ void DeleteMenuAdd()
 
 
 
-int xKeyDisplay[8] = { 5,25,55,65,85,100, 110, 120 };
+int xKeyDisplay[9] = {2,22,52,62,72, 87, 102, 112, 122};
 
 //---------------------------------------------------------------------------------------------
-string keyDisplayCreditClass[7] = {"Ma Lop:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
+string keyDisplayCreditClass[8] = {"Ma Lop:","Ten MH", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
 string keyDisplayCreaditClassEdit[6] = {"Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
 string keyDisplayStudent[6] = { "Ma SV:","Ho:","Ten:","Phai:", "So DT:", "Nam NH:" };
 string keyDisplaySubject[4] = {"Ma MH:", "Ten MH:", "So TCLT:", "So TCTH:"};
 string keyFindCreditClass[4] = {"Ma MH:", "NK:", "HK:", "Nhom:"};
+string keyFindRegisterStudent[3] = {"Ma Sinh vien: ", "Nien Khoa: ", "Hoc Ki: "};
 // ---------------------------------------------------------------------------------------------
-
+string keyDisplayRegisterCreditClass[7] = {"Ten MH:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
 void DeleteOldData(int nKey, int locate)
 {
 	for (int i = 0; i < nKey; i++)

@@ -19,8 +19,8 @@ int main()
 	LIST_STUDENT l;
 	InitListStudent(l);
 	LoadStudentFromFile(l);
-	
-	
+	//MenuManageCreditClass(listCC, t);
+	//MenuManagerStudent(l);
 	MergeAll(listCC, t, l);
 	
 	SaveCreditClassToFile(listCC);

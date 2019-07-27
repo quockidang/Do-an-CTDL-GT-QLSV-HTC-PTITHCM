@@ -33,13 +33,13 @@
 
 void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
 {
-	file << cc->idSubject<< endl;
-	file << cc->idClass<< endl;
-	file << cc->group<< endl;
-	file << cc->semester<< endl;
-	file << cc->shoolYear<< endl;
-	file << cc->studentMax<< endl;
-	file << cc->studentMin<< endl;
+	file << cc->idClass << endl;
+	file << cc->idSubject << endl;
+	file << cc->shoolYear << endl;
+	file << cc->semester << endl;
+	file << cc->group << endl;
+	file << cc->studentMax << endl;
+	file << cc->studentMin << endl;
 	
 	file << cc->listRegisterStudent.n << endl;
 	for(NODE_REGISTERSTUDENT* p = cc->listRegisterStudent.pHead; p != NULL; p->pNext)
@@ -53,7 +53,7 @@ void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
 void SaveCreditClassToFile(PTR_LISTCREDITCLASS l)
 {
 	fstream outFile;
-	outFile.open("DSLCT.txt", ios::out );
+	outFile.open("DSLTC1.txt", ios::out );
 	if (outFile.is_open())
 	{
 		outFile << l->n <<endl;
@@ -78,7 +78,7 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 	int nCreditClass, nRegisterStudent;
 	
 	
-	inFile.open("DSLCT.txt", ios::in);
+	inFile.open("DSLTC.txt", ios::in);
 	
 	if(inFile.is_open())
 	{
@@ -90,11 +90,13 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 		
 			l->listCreditClass[i] = new CREDITCLASS;
 			// load thong tin vao LTC
-			inFile.getline(l->listCreditClass[i]->idSubject, 10, '\n');
 			inFile >> l->listCreditClass[i]->idClass;
-			inFile >> l->listCreditClass[i]->group;
-			inFile >> l->listCreditClass[i]->semester;
+			getline(inFile, temp);
+			inFile.getline(l->listCreditClass[i]->idSubject, 10, '\n');
 			inFile >> l->listCreditClass[i]->shoolYear;
+			
+			inFile >> l->listCreditClass[i]->semester;
+			inFile >> l->listCreditClass[i]->group;
 			inFile >> l->listCreditClass[i]->studentMax;
 			inFile >> l->listCreditClass[i]->studentMin;
 			
@@ -358,7 +360,7 @@ PTR_CREDITCLASS FindCrediClassWithCondition(PTR_LISTCREDITCLASS l, char* idSubje
 }
 
 
-bool StatisticStudentOnCreditClassIsSucceed(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
+bool StatisticStudentOnCreditClassIsSucceed(PTR_LISTCREDITCLASS l, TREE_SUBJECT t, LIST_STUDENT listStudent)
 {
 	
 	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP THON TIN DE KET XUAT DSSV";
@@ -367,16 +369,214 @@ bool StatisticStudentOnCreditClassIsSucceed(PTR_LISTCREDITCLASS l, TREE_SUBJECT 
 	int schoolYear = 0, semester = 0, group = 0;
 	
 	input(id, schoolYear, semester, group, t);
-	char* idSubject;
-	strcpy(idSubject, id.c_str());
-	PTR_CREDITCLASS temp = FindCrediClassWithCondition(l, idSubject, schoolYear, semester, group);
 	
-	clrscr();
+	PTR_CREDITCLASS temp = FindCrediClassWithCondition(l, (char*)id.c_str(), schoolYear, semester, group);
+	
+	string arrIdStudent[100];
+	
+	LIST_STUDENT tempStudetn;
+	InitListStudent(tempStudetn);
+	int index = 0;
+		for (NODE_REGISTERSTUDENT *p = temp->listRegisterStudent.pHead; p != NULL; p = p->pNext)
+	{
 		
+		strcpy((char*)arrIdStudent[index++].c_str(), p->_registerStudent.idStudent);
+	}
+	
+	
+	for(int i = 0; i < index; i++)
+	{
+		NODE_STUDENT* q = FindStudent(listStudent, (char*)arrIdStudent[i].c_str());
+		AddTailListStudent(tempStudetn, q->_student);
+	}
+	clrscr();
+	Gotoxy(X_TITLE, Y_TITLE); cout << "DSSV DANG KI LTC CO MA MH LA: " + (string)temp->idSubject ;
+	
+	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
+	int count = -1;
+	for(NODE_STUDENT* k = tempStudetn.pHead; k != NULL; k = k->pNext)
+	{
+		count++;
+		OutputStudent(k->_student, count);
+	}
 	_getch();
 	return true;
 }
 
+void inputDataFindCreditClass(int &schoolYear, int &semester, string &idStudent, LIST_STUDENT l)
+{
+	int ordinal = 0;
+	bool isMoveUp = false;
+	bool isSave = false;
+	bool idIsExist = false;
+	Gotoxy(X_NOTIFY, Y_NOTIFY + 1); cout << "An F10 de hoan tat viec nhap data";
+	
+	while(true)
+	{
+		switch(ordinal)
+		{
+			case 0:
+				CheckMoveAndValidateID(idStudent, isMoveUp, ordinal, isSave, 34, 12);								
+				if(FindStudent(l, (char*)idStudent.c_str()) == NULL)
+				{
+					idIsExist = false;
+					break;
+				}else
+					idIsExist = true;
+				break;	
+			case 1:
+				CheckMoveAndValidateNumber(schoolYear,isMoveUp, ordinal, isSave,31, 2019);
+				break;
+			case 2:
+				CheckMoveAndValidateNumber(semester,isMoveUp, ordinal, isSave,29, 3);
+				break;				
+		}
+		
+		if (isMoveUp)
+		{
+			if (ordinal == 0)
+				isMoveUp = false;
+			ordinal--;
+
+		}
+		else
+		{
+			if (ordinal == 2)
+				isMoveUp = true;
+			ordinal++;
+		}
+		if (isSave)
+		{
+			Gotoxy(X_NOTIFY, Y_NOTIFY - 1);
+			cout << setw(50) << setfill(' ') << " ";
+		
+			if(idStudent.empty() || semester == 0 || schoolYear == 0)
+			{
+				Gotoxy(X_NOTIFY, Y_NOTIFY - 1);
+				cout << "Cac truong du lieu khong dc de trong";
+			}else if(!idIsExist)
+			{
+				Gotoxy(X_NOTIFY, Y_NOTIFY - 1);
+				cout << "Ma Sinh Vien khong ton tai";
+			}
+			else 
+			{
+				DeleteMenuAdd();
+				return;
+			}
+		
+			
+		}
+		isSave = false;
+	}
+}
+
+//void OutputRegisterCreditClass(PTR_CREDITCLASS cc, SUBJECT sj, int ordinal) // ordinal == thu tu
+//{
+//	DeleteOldData(sizeof(keyDisplayRegisterCreditClass) / sizeof(string), ordinal);
+//	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 3 + ordinal); cout << sj.nameSubject;
+//	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->idSubject;
+//	Gotoxy(xKeyDisplay[2] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->shoolYear;
+//	Gotoxy(xKeyDisplay[3] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->semester;
+//	Gotoxy(xKeyDisplay[4] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->group;
+//	Gotoxy(xKeyDisplay[5] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->studentMax;
+//	Gotoxy(xKeyDisplay[6] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->studentMin;	
+//}
+//
+//void OutputListRegisterCreditClass(PTR_LISTCREDITCLASS l, SUBJECT sj)
+//{
+//	if(l == NULL) return;
+//	
+//	for(int i = 0; i <= l->n; i++)
+//	{
+//		OutputRegisterCreditClass(l->listCreditClass[i], sj, i);
+//	}
+//}
+//
+//void OutputListRegisterCreditClassPerPage(PTR_LISTCREDITCLASS l, TREE_SUBJECT t, int indexBegin)
+//{
+//	if(l == NULL) return;
+//	NODE_SUBJECT* p;
+//	for(int i = 0; i + indexBegin <= l->n && i < QUANTITY_PER_PAGE; i++)
+//	{
+//		p = FindSubject(t, l->listCreditClass[i + indexBegin]->idSubject);
+//		OutputRegisterCreditClass(l->listCreditClass[i + indexBegin], p->_subject, i * 2);
+//	}
+//	Gotoxy(X_PAGE, Y_PAGE);
+//	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
+//}
+
+bool RegisterCreditClassIsSucceed(PTR_LISTCREDITCLASS &lcc, LIST_STUDENT lst, TREE_SUBJECT t)
+{
+	clrscr();
+	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP THON TIN DE DANG KI LTC";
+	DisplayEdit(keyFindRegisterStudent, sizeof(keyFindRegisterStudent) / sizeof(string), 35);
+	int schoolYear = 0;
+	int semester = 0;
+	string idStudent;
+	inputDataFindCreditClass(schoolYear, semester, idStudent, lst);
+	
+	PTR_LISTCREDITCLASS temp = new LIST_CREDITCLASS;
+	
+	for(int i = 0; i <= lcc->n; i++)
+	{
+		if(lcc->listCreditClass[i]->shoolYear == schoolYear && lcc->listCreditClass[i]->semester == semester)
+		{
+			temp->listCreditClass[++temp->n] = lcc->listCreditClass[i];
+		}
+	}
+	
+	if(temp->n == -1)
+	{
+		clrscr();
+		return false;
+	}
+	
+	int key;	
+	pageNowCreditClass = 1;
+	currposCreditClass = 0;
+	currposPrecCreditClass = 0;
+backMenu:
+	clrscr();	
+	Gotoxy(X_TITLE, Y_TITLE); cout << "DANG KI LOP TIN CHI";
+	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
+	OutputListCreditClassPerPage(temp, t, 0);
+	
+	Gotoxy(X_PAGE, Y_PAGE);
+	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
+	
+	int k = ChooseCreditClass(temp, t);
+	if(k == -1)
+	{
+		return false;
+		clrscr();
+	} 
+	Gotoxy(X_NOTIFY - 6 , Y_NOTIFY);
+	cout << "Ban co chac chan dang ky lop nay! an ENTER de dong y";			
+	while(true)
+	{
+		while(_kbhit())
+		{
+			key = _getch();
+			if(key == ENTER)
+			{
+				Gotoxy(X_NOTIFY - 6, Y_NOTIFY);
+				cout << setw(50) << setfill(' ') << " ";
+				
+				int res = FindCreditClassWithIdSubject(lcc, temp->listCreditClass[k]->idSubject);		
+				REGISTER_STUDENT rs;
+				strcpy(rs.idStudent,(char*)idStudent.c_str());	
+				rs.point = 0;	
+				AddTailListRegister(lcc->listCreditClass[res]->listRegisterStudent, rs);
+				Gotoxy(X_NOTIFY - 6 , Y_NOTIFY);
+				cout << "Dang Ki Thanh Cong!";
+				DeleteCreditClass(temp, temp->listCreditClass[k]->idClass);
+				goto backMenu;
+			}else if(key == ESC) return true;
+				
+		}
+	}			
+}
 
 
 
@@ -384,6 +584,7 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 {
 	while(true)
 	{
+		clrscr();
 		MainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
 		
 		int type = ChooseMainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
@@ -410,6 +611,10 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 				break;
 			case 3:
 				clrscr();
+				if(RegisterCreditClassIsSucceed(pListCC, l, t) == false) continue;
+				break;
+			case 4:
+				clrscr();
 				MainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
 				int chosenStatistic = ChooseMainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
 				
@@ -417,14 +622,17 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 				{
 					case 0:
 						clrscr();
-						if(StatisticStudentOnCreditClassIsSucceed(pListCC, t) == false) continue;
+						if(StatisticStudentOnCreditClassIsSucceed(pListCC, t, l) == false) continue;
 						break;
+					default:
+						break;						
 				}
-				
-				
+					
+			
 		}
 		
 		clrscr();
+		return;
 	}// while true
 }// void
 
