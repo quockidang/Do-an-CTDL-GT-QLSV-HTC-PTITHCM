@@ -353,7 +353,7 @@ int ChooseCreditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 	pageNowCreditClass = 1;
 	currposCreditClass = 0;
 	currposPrecCreditClass = 0;
-	clrscr();
+	
 	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 	OutputListCreditClassPerPage(l, 0);
 	SetDefaultChosenCreditClass(l, currposCreditClass);
