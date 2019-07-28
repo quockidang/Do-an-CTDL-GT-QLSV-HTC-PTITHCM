@@ -34,6 +34,7 @@
 void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
 {
 	file << cc->idClass << endl;
+	file << cc->nameSubject << endl;
 	file << cc->idSubject << endl;
 	file << cc->shoolYear << endl;
 	file << cc->semester << endl;
@@ -42,7 +43,7 @@ void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
 	file << cc->studentMin << endl;
 	
 	file << cc->listRegisterStudent.n << endl;
-	for(NODE_REGISTERSTUDENT* p = cc->listRegisterStudent.pHead; p != NULL; p->pNext)
+	for(NODE_REGISTERSTUDENT* p = cc->listRegisterStudent.pHead; p != NULL; p = p->pNext)
 	{
 		file << p->_registerStudent.idStudent << endl;
 		file << p->_registerStudent.point << endl;
@@ -64,7 +65,7 @@ void SaveCreditClassToFile(PTR_LISTCREDITCLASS l)
 	}else
 	{
 		
-		cout << "KET NOI VOI FILE DocGia THAT BAI! ";
+		cout << "KET NOI VOI FILE THAT BAI! ";
 	}
 	
 	outFile.close();
@@ -84,7 +85,7 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 	{
 		string temp;		
 		inFile >> nCreditClass;
-		getline(inFile, temp);
+		
 		for(int i = 0; i <= nCreditClass; i++)
 		{
 		
@@ -92,7 +93,9 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 			// load thong tin vao LTC
 			inFile >> l->listCreditClass[i]->idClass;
 			getline(inFile, temp);
+			inFile.getline(l->listCreditClass[i]->nameSubject, 30, '\n');
 			inFile.getline(l->listCreditClass[i]->idSubject, 10, '\n');
+			
 			inFile >> l->listCreditClass[i]->shoolYear;
 			
 			inFile >> l->listCreditClass[i]->semester;
@@ -107,7 +110,8 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 			REGISTER_STUDENT rs;
 			for(int j = 0; j < nRegisterStudent; j++)
 			{
-				inFile.getline(rs.idStudent, 10, '\n');
+				getline(inFile, temp);
+				inFile.getline(rs.idStudent, 12, '\n');
 				inFile >> rs.point;
 				
 				AddTailListRegister(l->listCreditClass[i]->listRegisterStudent, rs);
@@ -506,10 +510,11 @@ void inputDataFindCreditClass(int &schoolYear, int &semester, string &idStudent,
 //	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 //}
 
-bool RegisterCreditClassIsSucceed(PTR_LISTCREDITCLASS &lcc, LIST_STUDENT lst, TREE_SUBJECT t)
+void RegisterCreditClassIsSucceed(PTR_LISTCREDITCLASS &lcc, LIST_STUDENT lst, TREE_SUBJECT t)
 {
+
 	clrscr();
-	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP THON TIN DE DANG KI LTC";
+	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP THONG TIN DE DANG KI LTC";
 	DisplayEdit(keyFindRegisterStudent, sizeof(keyFindRegisterStudent) / sizeof(string), 35);
 	int schoolYear = 0;
 	int semester = 0;
@@ -517,80 +522,111 @@ bool RegisterCreditClassIsSucceed(PTR_LISTCREDITCLASS &lcc, LIST_STUDENT lst, TR
 	inputDataFindCreditClass(schoolYear, semester, idStudent, lst);
 	
 	PTR_LISTCREDITCLASS temp = new LIST_CREDITCLASS;
-	
+	unsigned int registerCreditClass[10];
+	int dem = 0;
 	for(int i = 0; i <= lcc->n; i++)
 	{
+		
 		if(lcc->listCreditClass[i]->shoolYear == schoolYear && lcc->listCreditClass[i]->semester == semester)
 		{
 			temp->listCreditClass[++temp->n] = lcc->listCreditClass[i];
 		}
+		
 	}
 	
 	if(temp->n == -1)
 	{
 		clrscr();
-		return false;
+		return;
 	}
 	
 	int key;	
 	pageNowCreditClass = 1;
 	currposCreditClass = 0;
 	currposPrecCreditClass = 0;
-backMenu:
-	clrscr();	
-	Gotoxy(X_TITLE, Y_TITLE); cout << "DANG KI LOP TIN CHI";
-	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
-	OutputListCreditClassPerPage(temp, t, 0);
-	Gotoxy(X_NOTIFY - 6, Y_NOTIFY);
-	cout << setw(50) << setfill(' ') << " ";
-	Gotoxy(X_PAGE, Y_PAGE);
-	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 	
-	int k = ChooseCreditClass(temp, t);
-	if(k == -1)
-	{
-		return false;
-		clrscr();
-	} 
 	
-	Gotoxy(X_NOTIFY - 6 , Y_NOTIFY);
-	cout << "Ban co muon dang ky LTC nay khong! An ENTER neu dong y";
 	
-	key = _getch();
 	
-	if(key == ENTER)
-	{
-		Gotoxy(X_NOTIFY - 6, Y_NOTIFY);
-		cout << setw(50) << setfill(' ') << " ";
-		
-		int res = FindCreditClassWithIdSubject(lcc, temp->listCreditClass[k]->idSubject);		
-		REGISTER_STUDENT rs;
-		strcpy(rs.idStudent,(char*)idStudent.c_str());	
-		rs.point = 0;
-		
-		AddTailListRegister(lcc->listCreditClass[res]->listRegisterStudent, rs);
-		DeleteCreditClass(temp, temp->listCreditClass[k]->idClass);
-		
-		clrscr();
+	
+	
+	do{	
+		clrscr();	
 		Gotoxy(X_TITLE, Y_TITLE); cout << "DANG KI LOP TIN CHI";
 		Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
-		
-		if((temp->n + 1) % QUANTITY_PER_PAGE == 0) pageNowCreditClass--;
-		totalPageCreditClass = temp->n / QUANTITY_PER_PAGE + 1;
-		OutputListCreditClassPerPage(temp, t, (pageNowCreditClass -1) * QUANTITY_PER_PAGE);
-	
+		OutputListCreditClassPerPage(temp, 0);
+		Gotoxy(X_NOTIFY - 10, Y_NOTIFY);
+		cout << setw(50) << setfill(' ') << " ";
 		Gotoxy(X_PAGE, Y_PAGE);
 		cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
-	
-		Gotoxy(X_NOTIFY - 6 , Y_NOTIFY);
-		cout << "Dang Ki Thanh Cong! An F2 de tiep tuc, ESC de thoat";
-		key = _getch();
-		if(key == KEY_F2)
+			
+		int k = ChooseCreditClass(temp, t);
+		if(k == -1)
 		{
-			goto backMenu;
-		}else if(key == ESC) return true;
+			return;
+			clrscr();
+		} 
 		
-	}			
+		
+		Gotoxy(X_NOTIFY - 10 , Y_NOTIFY);
+		cout << "Ban co muon dang ky LTC nay khong! An ENTER neu dong y";
+		key = _getch();
+		if(key == ENTER)
+		{
+			bool flag = false;
+			for(int i = 0; i < dem; i++)
+			{					
+				if(registerCreditClass[i] == temp->listCreditClass[k]->idClass)
+				{
+					flag = true;
+				}	
+			}
+				
+			
+			if(flag == true)
+			{
+				Gotoxy(X_NOTIFY - 10, Y_NOTIFY); cout << "Ban da chon lop tin chi nay roi";
+				Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1); cout << "ESC de luu dang ki, F2 De chon lai LTC";
+				flag = false;
+			}
+			else{
+				registerCreditClass[dem++] = temp->listCreditClass[k]->idClass;
+				Gotoxy(X_NOTIFY - 10, Y_NOTIFY); cout << "Chon thanh cong!";
+				Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1); cout << "F2 de luu dang ki, nhan nut bat ki de tiep tuc chon LTC";
+				Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 2); cout << "Esc de thoat";
+
+			}
+				
+		}
+			//AddTailListRegister(lcc->listCreditClass[Find])
+//			Gotoxy(X_NOTIFY - 10, Y_NOTIFY);
+//			cout << setw(50) << setfill(' ') << " ";
+			
+//			
+		key = _getch();
+		if(key == KEY_F10)
+		{	
+			cout << "Ádasdasdasd";
+			REGISTER_STUDENT rs;
+			strcpy(rs.idStudent, idStudent.c_str());
+			rs.point = -1;
+			for(int i = 0; i < dem; i++)
+			{				
+				AddTailListRegister(lcc->listCreditClass[i]->listRegisterStudent, rs);
+			}
+			
+			return;
+		}
+	}while(key != ESC);
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 
 
@@ -599,55 +635,58 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 {
 	while(true)
 	{
-		clrscr();
-		MainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
-		
-		int type = ChooseMainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
-		
-		totalPageCreditClass = pListCC->n / QUANTITY_PER_PAGE + 1;
-		totalPageSubject = nSubject / QUANTITY_PER_PAGE + 1;
-		totalPageStudent = l.n / QUANTITY_PER_PAGE + 1;
-		
-		switch(type)
-		{
-			case -1:
-				return;
-			case 0:
-				MenuManageCreditClass(pListCC, t);
-				break;
-			case 1:
-				clrscr();
-				MenuManagerStudent(l);
-				break;
-				
-			case 2:
-				clrscr();				
-				MenuSubjectManager(t);
-				break;
-			case 3:
-				clrscr();
-				if(RegisterCreditClassIsSucceed(pListCC, l, t) == false) continue;
-				break;
-			case 4:
-				clrscr();
-				MainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
-				int chosenStatistic = ChooseMainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
-				
-				switch(chosenStatistic)
-				{
-					case 0:
-						clrscr();
-						if(StatisticStudentOnCreditClassIsSucceed(pListCC, t, l) == false) continue;
-						break;
-					default:
-						break;						
-				}
-					
+			clrscr();
+	MainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
+	
+	int type = ChooseMainMenu(keyMainMenu, sizeof(keyMainMenu) / sizeof(string));
+	
+	totalPageCreditClass = pListCC->n / QUANTITY_PER_PAGE + 1;
+	totalPageSubject = nSubject / QUANTITY_PER_PAGE + 1;
+	totalPageStudent = l.n / QUANTITY_PER_PAGE + 1;
+	
+	switch(type)
+	{
+		case -1:
+			return;
+		case 0:
+			MenuManageCreditClass(pListCC, t);
+			break;
+		case 1:
+			clrscr();
+			MenuManagerStudent(l);
+			break;
 			
-		}
+		case 2:
+			clrscr();				
+			MenuSubjectManager(t);
+			break;
+		case 3:
+			clrscr();
+			RegisterCreditClassIsSucceed(pListCC, l, t);
+			break;
+		case 4:
+			clrscr();
+			MainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
+			int chosenStatistic = ChooseMainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
+			
+			switch(chosenStatistic)
+			{
+				case 0:
+					clrscr();
+					if(StatisticStudentOnCreditClassIsSucceed(pListCC, t, l) == false) continue;
+					break;
+				default:
+					break;						
+			}
+				
 		
-		clrscr();
-		return;
+	}
+	
+	clrscr();
+	return;	
+	
+	
+
 	}// while true
 }// void
 

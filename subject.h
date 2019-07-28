@@ -9,7 +9,7 @@ struct Subject{
 	int numberTheory; //so tin chi ly thuyet
 	int numberPractice; //so tin chi thuc hanh
 	char idSubject[10]; // ma mon hoc, key
-	char nameSubject[25]; //ten mon hoc
+	char nameSubject[30]; //ten mon hoc
 	
 };
 typedef struct Subject SUBJECT;

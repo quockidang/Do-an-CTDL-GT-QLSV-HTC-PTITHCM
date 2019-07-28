@@ -9,6 +9,8 @@ struct student{
 	int sex = 1; // 1 male, 2 female
 	char phoneNUmber[12];
 	int yearAdmission; // nam nhap hoc
+	
+	
 };
 typedef struct student STUDENT;
 typedef STUDENT* PTR_STUDENT;
