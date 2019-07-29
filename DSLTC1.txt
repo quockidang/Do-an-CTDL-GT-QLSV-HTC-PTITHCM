@@ -9,7 +9,7 @@ INT21
 1
 1
 n16dcpt001
--1
+2
 1
 CSDL
 INT112

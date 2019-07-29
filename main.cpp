@@ -3,6 +3,8 @@
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 #include "creditclass.h"
 #include "student.h"
+#include<iostream>
+using namespace std;
 int main()
  {
 	
@@ -26,6 +28,7 @@ int main()
 	SaveCreditClassToFile(listCC);
 	SaveStudentToFile(l);
 	SaveSubjectToFile(t);
-		                  
+     
+      
 	return 0;
 }

@@ -4,7 +4,7 @@
 #include "subject.h"
 
 struct RegisterStudent {
-	char idStudent[10];
+	char idStudent[12];
 	float point;
 };
 

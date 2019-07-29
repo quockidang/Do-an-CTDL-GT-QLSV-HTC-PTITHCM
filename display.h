@@ -8,9 +8,9 @@
 
 // main menu .....
 string keyMainMenu[5] = {"Lop Tin Chi", "Sinh Vien", "Mon Hoc", "Dang Ki LTC", "Thong Ke"};
-string keyStatistic[5] = {"DSSV  LTC", "DSSV LOP", "Ban Diem Mon Hoc", "Diem TB Khoa Hoc", "Ban Diem Tong ket" };
+string keyStatistic[6] = {"IN DSSV LTC", " IN DSSV", "Nhap Diem", "Bang Diem MH", "Diem TB Khoa Hoc", "Ban Diem TK" };
 
-int xMainMenu[5] = {10, 45, 80, 115, 145};
+int xMainMenu[6] = {10, 40, 70, 100, 130, 160};
 
 void CreateBox(int x, int y, string text, int length)
 {

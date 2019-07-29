@@ -217,22 +217,31 @@ bool ClearListStudent(LIST_STUDENT &l)
 	return true;
 }
 
-
-void QuickSort(int left, int right, string* arr) {
-	string key = arr[(left + right) / 2];
-	int i = left, j = right;
-	do {
-		while (strcmp((char*)arr[i].c_str(), (char*)key.c_str()) < 0) i++;
-		while (strcmp((char*)arr[j].c_str(), (char*)key.c_str()) > 0) j--;
-		if (i <= j) {
-			if (i < j) swap(arr[i], arr[j]);
-			i++;	j--;
+void SelectionSort(string arr[], int n)
+{
+	int i, j, indexMin;
+	string minStr;
+	
+	for(i = 0; i< n - 1; i++)
+	{
+		indexMin = i;
+		minStr = arr[i];
+		
+		for(j = i + 1; j < n; j++)
+		{
+			if(minStr > arr[j])
+			{
+				minStr = arr[j];
+				indexMin = j;
+			}
 		}
-	} while (i <= j);
-	if (left < j) QuickSort(left, j, arr);
-	if (right > i) QuickSort(i, right, arr);
+		
+		if(indexMin != i)
+		{
+			swap(arr[i], arr[indexMin]);
+		}
+	}
 }
-
 
 
 void OutputStudent(STUDENT st, int locate)
@@ -556,10 +565,7 @@ backMenu:
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1);
 	cout <<"ENTER NEU MA LOP DA DUNG HOAC NHAN PHIM BAT KI DE NHAP LAI";
 	key = _getch();
-	if(key == ENTER)
-	{
-
-	}else goto backMenu;
+	if(key != ENTER) goto backMenu;
 	
 	clrscr();
 	OutputListStudentWithIdClassPerPage(l, 0, (char*)idClass.c_str());
@@ -661,4 +667,3 @@ backMenu:
 }
 
 #endif
-
