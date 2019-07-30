@@ -65,7 +65,7 @@ void AddTailListRegister(LIST_REGISTERSTUDENT &l, REGISTER_STUDENT data)
 	++l.n;	
 }
 
-NODE_REGISTERSTUDENT* FindRegisterStudent(LIST_REGISTERSTUDENT &l, char *id)
+NODE_REGISTERSTUDENT* FindRegisterStudent(LIST_REGISTERSTUDENT l, char *id)
 {
 	if(l.pHead == NULL) return NULL;
 	for(NODE_REGISTERSTUDENT *p = l.pHead; p != NULL; p = p->pNext)
@@ -76,7 +76,7 @@ NODE_REGISTERSTUDENT* FindRegisterStudent(LIST_REGISTERSTUDENT &l, char *id)
 	return NULL;
 }
 
-NODE_REGISTERSTUDENT* FindFlightByOrdinal(LIST_REGISTERSTUDENT l, int ordinal)
+NODE_REGISTERSTUDENT* FindRegisterStudentByOrdinal(LIST_REGISTERSTUDENT l, int ordinal)
 {
 	if(l.pHead == NULL) return NULL;
 	if(l.n - 1 < ordinal) return NULL;

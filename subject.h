@@ -219,7 +219,7 @@ void OutputListSubjectPerPage(TREE_SUBJECT t , int indexBegin)
 		
 		
 		NODE_SUBJECT* s = FindSubject(t, arrSubject[i + indexBegin].idSubject);
-		if(s == NULL) cout << "Fail";
+		//if(s == NULL) cout << "Fail";
 
 		OutputSubject(s->_subject, i * 2);
 	}
@@ -463,11 +463,7 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 				{
 					InsertSubjectToTree(t, data);
 				}
-				
-
-				
-
-				
+								
 				DeleteMenuAdd();
 				Gotoxy(X_NOTIFY, Y_NOTIFY + 1);
 				cout << "                    ";
@@ -497,14 +493,13 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 		Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 		if(nSubject != -1)
 			OutputListSubjectPerPage(t, 0);
+		Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
 		
 		int key;
 		while(true)
 		{
 			while(_kbhit())
 			{
-				Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY MON HOC ";
-				Gotoxy(X_PAGE, Y_PAGE); cout << "Trang "<< pageNowSubject << "/" << totalPageSubject;
 				key = _getch();
 				
 				if(key == 0 || key == 224)
@@ -528,17 +523,19 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 					else if(key == KEY_F3)
 					{
 						clrscr();
-						NODE_SUBJECT* k = ChooseSubject(t);
+						Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";                     
+						Gotoxy(X_PAGE, Y_PAGE); cout << "Trang "<< pageNowSubject << "/" << totalPageSubject;
 						
+						NODE_SUBJECT* k = ChooseSubject(t);
 						if(k == NULL) goto backMenu;
 						
 						Gotoxy(X_NOTIFY, Y_NOTIFY);
 						cout << "Ban co chan chan xoa? ENTER == dong y";
 						key = _getch();
-						
 						if(key == ENTER)
 						{
 							clrscr();
+							Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
 							Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 							for(int i = 0; i <= nSubject; i++)
 							{
@@ -550,8 +547,7 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 									nSubject--;
 									break;
 								}
-							}
-							
+							}	
 							if(IsDeleteSubject(t, k->_subject))
 							{
 								//QuickSort(0, nSubject, arrSubject);
@@ -559,7 +555,6 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 								Gotoxy(X_NOTIFY, Y_NOTIFY);
 								cout << "Xoa thanh cong";
 							}
-							
 						}
 						else
 							goto backMenu;
@@ -572,14 +567,13 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 						inputSubject(t, k->_subject, true);
 						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
 						
-						key = _getch();
-						if(key == ESC) goto backMenu;
+						
 					}
 					else if( key == PAGE_DOWN && pageNowSubject < totalPageSubject)
 					{
 						clrscr();
 						pageNowSubject++;
-					
+						Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
 						Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
 					}
@@ -587,14 +581,13 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 					{
 						clrscr();
 						pageNowSubject--;
-						
+						Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
 						Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
 					}					
 				}				
 				else if(key == ESC)
 				{
-				
 					return;	
 				}
 						

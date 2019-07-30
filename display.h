@@ -100,15 +100,7 @@ int ChooseMainMenu(string key[], int nKey)
 
 
 
-void DeleteMenuAdd()
-{
-	system("color 5A");
-	for (int i = 0; i < 20; i++)
-	{
-		Gotoxy(X_ADD -2, Y_ADD+i-1);
-		cout << setw(60) << setfill(' ') << " ";
-	}
-}
+
 
 
 
@@ -120,8 +112,13 @@ string keyDisplayCreditClass[8] = {"Ma Lop:","Ten MH", "Ma MH:", "NK:", "Hoc Ki:
 string keyDisplayCreaditClassEdit[6] = {"Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
 string keyDisplayStudent[6] = { "Ma SV:","Ho:","Ten:","Phai:", "So DT:", "Nam NH:" };
 string keyDisplaySubject[4] = {"Ma MH:", "Ten MH:", "So TCLT:", "So TCTH:"};
+
+
 string keyFindCreditClass[4] = {"Ma MH:", "NK:", "HK:", "Nhom:"};
 string keyFindRegisterStudent[3] = {"Ma Sinh vien: ", "Nien Khoa: ", "Hoc Ki: "};
+
+string keyDisplayInputScoreCreditClass[5] = {"MA SV", "Ho", "Ten", "Diem", "STT"};
+string keyDisplayEditInputScore[2] = {"Phan nguyen: ", "Phan thap phan:"};
 // ---------------------------------------------------------------------------------------------
 string keyDisplayRegisterCreditClass[7] = {"Ten MH:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
 void DeleteOldData(int nKey, int locate)
@@ -243,6 +240,18 @@ void DeleteNote(int nColumn)
 	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
 	cout << setw(xKeyDisplay[nColumn] - xKeyDisplay[0] - 1) << " " << setfill(' ');
 }
+
+void DeleteMenuAdd()
+{
+	system("color 5A");
+	for (int i = 0; i < 20; i++)
+	{
+		Gotoxy(X_ADD + 2, Y_ADD+i-1);
+		cout << setw(60) << setfill(' ') << " ";
+	}
+}
+
+
 
 
 #endif

@@ -28,7 +28,9 @@ int main()
 	SaveCreditClassToFile(listCC);
 	SaveStudentToFile(l);
 	SaveSubjectToFile(t);
-     
-      
+//     	int a = 10;
+//     	int c = 9;
+//     	float b = a + ((float)c / 10);
+//	cout << b;
 	return 0;
 }

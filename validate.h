@@ -277,7 +277,7 @@ void CheckMoveAndValidateNumber(int &result, bool &isMove, int &ordinal, bool &i
 		while (_kbhit())
 		{
 			int key = _getch();
-			if (key != 224 && key != SPACE && key!= 0 )
+			if (key != 224 && key != SPACE && key != 0 )
 			{
 				if (key >= 48 && key <= 57)
 				{
@@ -338,75 +338,34 @@ void StandardName(char *a)
 {
 	a[0] = toupper(a[0]);
 	int length = strlen(a);
+	
 	for (int i = 1; i < length; ++i)
-	{
+	{	
 		if (a[i -1] == ' ' && a[i] != ' ') a[i] = toupper(a[i]);
 		else a[i] = tolower(a[i]);
 	}
 }
-/// input subject
 
-//string idSubject = "";
-//	string nameSubject = "";
-//	
-//	VONGLAP:
-//	do
-//	{
-//		Gotoxy(X_ADD + 13, 0 * 3 + Y_ADD);
-//		fflush(stdin);
-//		getline(cin, idSubject);
-//		for(int i = 0; i< idSubject.length(); i++)
-//		{
-//			if( idSubject[i] == 32)
-//			{
-//				Gotoxy(X_NOTIFY, Y_NOTIFY);
-//				cout << "Ma mon hoc khong chua khoang trang";
-//				
-//				goto VONGLAP;
-//				
-//			}
-//		}
-//		
-//		if(idSubject.length() > 10 || idSubject.empty())
-//		{
-//			clrscr();
-//			goto VONGLAP;
-//		}
-//	}while(idSubject.length() > 10 || idSubject.empty());	
-//	strcpy(data.idSubject, idSubject.c_str());
-//	
-//	
-//	
-//	do
-//	{
-//		Gotoxy(X_ADD + 13, 1 * 3 + Y_ADD);
-//		fflush(stdin);
-//		getline(cin, nameSubject);
-//		if(nameSubject.length() > 30 || nameSubject.empty())
-//		{
-//			
-//		}		
-//	}while(nameSubject.length() > 30 || nameSubject.empty());
-//	strcpy(data.nameSubject, nameSubject.c_str());	
-//	
-//	do
-//	{
-//	
-//		Gotoxy(X_ADD + 13, 2 * 3 + Y_ADD);
-//		cin >> data.numberTheory;
-//	}while(data.numberTheory <= 0 || data.numberTheory > 4);
-//	
-//	do
-//	{
-//		Gotoxy(X_ADD + 13, 3 * 3 + Y_ADD);
-//		cin >> data.numberPractice;
-//	}while(data.numberPractice <= 0 || data.numberPractice > 4);
-//	
-//	
-//	InsertSubjectToTree(t, data);
-//	
-//	DeleteMenuAdd();
-//	Gotoxy(X_NOTIFY, Y_NOTIFY + 1);
-//	cout << "                    ";
-//	
-//	ShowCur(false);
+void StandarString(string &result)
+{
+
+	for (size_t i = 1; i < result.length(); i++)
+	{
+		if (result[0] == ' ')
+		{
+			result.erase(0, 1);
+			i--;
+		}
+		else if (result[i - 1] == ' ' && result[i] == ' ')
+		{
+			result.erase(i - 1, 1);
+			i--;
+		}
+		else if (result[result.length() - 1] == ' ')
+		{
+			result.erase(result.length() - 1, 1);
+
+		}
+	}
+	
+}

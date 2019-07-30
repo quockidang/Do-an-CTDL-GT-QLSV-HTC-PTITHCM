@@ -26,8 +26,7 @@ struct ListStudent{
 };
 typedef struct ListStudent LIST_STUDENT;
 
-string arrIdStudent[100];
-int nStudentInClass = -1;
+
 // get node student -- lay dia chi cua mot sinh vie
 NODE_STUDENT* GetNodeStudent(STUDENT DATA)
 {
@@ -89,7 +88,7 @@ NODE_STUDENT* FindStudent(LIST_STUDENT l, char* id)
 	if(l.pHead == NULL) return NULL;
 	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
 	{
-		if (_strcmpi(p->_student.idStudent, id) == 0)
+		if (strcmpi(p->_student.idStudent, id) == 0)
 			return p;
 	}
 	return NULL;
@@ -354,7 +353,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		switch(ordinal)
 		{
 			case 0:
-				CheckMoveAndValidateID(idStudent, isMoveUp, ordinal, isSave, 20, 12);
+				CheckMoveAndValidateID(idStudent, isMoveUp, ordinal, isSave, 20 + 7, 12);
 				if(isEdited && _stricmp(idStudent.c_str(), st.idStudent) == 0) break;
 				if(FindStudent(l, (char *)idStudent.c_str()) == NULL)
 				{
@@ -397,17 +396,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		
 		
 		if(isSave)
-		{
-			// binding data
-			strcpy(st.idStudent, idStudent.c_str());
-			
-			strcpy(st.fistName, firstName.c_str());
-			strcpy(st.lastName, lastName.c_str());
-			strcpy(st.phoneNUmber, phoneNumber.c_str());
-			st.sex = sex;
-			st.yearAdmission = yearAdmission;
-			
-			
+		{	
 			Gotoxy(X_NOTIFY, Y_NOTIFY);			
 			cout << setw(50) << setfill(' ') << " ";
 			if(idStudent.empty()) return;
@@ -423,6 +412,21 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 			}
 			else
 			{
+				
+				// binding data
+				StandarString(firstName);
+				StandarString(lastName);
+				
+				
+				strcpy(st.idStudent, idStudent.c_str());				
+				strcpy(st.fistName, firstName.c_str());
+				strcpy(st.lastName, lastName.c_str());
+				strcpy(st.phoneNUmber, phoneNumber.c_str());
+				st.sex = sex;
+				st.yearAdmission = yearAdmission;
+				StandardName(st.lastName);
+				StandardName(st.fistName);
+				
 				if(isEdited)
 				{
 					NODE_STUDENT* p = FindStudent(l, st.idStudent);
@@ -617,18 +621,6 @@ backMenu:
 							ChangePageManageStudent(l, (char*)idClass.c_str());
 							Gotoxy(X_NOTIFY, Y_NOTIFY);
 							cout << "Xoa thanh cong";
-							
-							for(int i = 0; i <= l.n; i++)
-							{
-								
-								if(strcmp(k->_student.idStudent, (char*)arrIdStudent[i].c_str()) == 0)
-								{
-									for(int j = i; j < l.n; j++)
-										arrIdStudent[j] = arrIdStudent[j+1];
-									
-									break;
-								}
-							}
 						}
 					}else goto backMenu;
 				}
@@ -642,6 +634,7 @@ backMenu:
 					clrscr();
 					Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
 					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, (char*)idClass.c_str());
+					Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass;
 					Gotoxy(X_NOTIFY, Y_NOTIFY);
 					cout << "Sua thanh cong";
 				}
