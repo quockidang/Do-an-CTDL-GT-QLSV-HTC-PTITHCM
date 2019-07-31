@@ -569,8 +569,10 @@ backMenu:
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1);
 	cout <<"ENTER NEU MA LOP DA DUNG HOAC NHAN PHIM BAT KI DE NHAP LAI";
 	key = _getch();
-	if(key != ENTER) goto backMenu;
-	
+	if(key == ENTER) break;
+	else if(key == ESC)
+		return;
+	else goto backMenu;
 	clrscr();
 	OutputListStudentWithIdClassPerPage(l, 0, (char*)idClass.c_str());
 	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
@@ -588,9 +590,7 @@ backMenu:
 			{
 				key = _getch();
 				if(key == KEY_F2)
-				{
-				
-				
+				{	
 					STUDENT st;
 					strcpy(st.idClass, idClass.c_str());
 					DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
