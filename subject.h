@@ -13,7 +13,7 @@ struct Subject{
 	
 };
 typedef struct Subject SUBJECT;
-typedef SUBJECT* PTR_SUBJECT;
+
 struct NodeSubject{
 	SUBJECT _subject;
 	struct NodeSubject *pLeft, *pRight;
@@ -410,6 +410,7 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 				break;
 			case 3:
 				CheckMoveAndValidateNumber(numberPractice,isMoveUp, ordinal, isSave,22 + 7,  4);
+			
 		}
 		
 		if (isMoveUp)
@@ -565,6 +566,7 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 						if(k == NULL) goto backMenu;
 						DisplayEdit(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string), 35);
 						inputSubject(t, k->_subject, true);
+						Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
 						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
 						
 						

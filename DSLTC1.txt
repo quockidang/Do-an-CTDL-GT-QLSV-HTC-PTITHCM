@@ -7,10 +7,12 @@ INT21
 1
 1
 1
-2
+3
 n16dcpt001
 2
 N16DCPT002
+-1
+n16dcpt001
 -1
 1
 CSDL

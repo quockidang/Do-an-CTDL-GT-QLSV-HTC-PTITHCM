@@ -425,7 +425,6 @@ void inputDataFindCreditClass(int &schoolYear, int &semester, string &idStudent,
 	bool isSave = false;
 	bool idIsExist = false;
 	Gotoxy(X_NOTIFY, Y_NOTIFY + 1); cout << "An F10 de hoan tat viec nhap data";
-	
 	while(true)
 	{
 		switch(ordinal)
@@ -464,7 +463,7 @@ void inputDataFindCreditClass(int &schoolYear, int &semester, string &idStudent,
 		{
 			Gotoxy(X_NOTIFY, Y_NOTIFY - 1);
 			cout << setw(50) << setfill(' ') << " ";
-		
+			
 			if(idStudent.empty() || semester == 0 || schoolYear == 0)
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY - 1);
@@ -490,131 +489,153 @@ void inputDataFindCreditClass(int &schoolYear, int &semester, string &idStudent,
 
 void RegisterCreditClassIsSucceed(PTR_LISTCREDITCLASS &lcc, LIST_STUDENT lst, TREE_SUBJECT t)
 {
-
+backMenu:
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP THONG TIN DE DANG KI LTC";
 	DisplayEdit(keyFindRegisterStudent, sizeof(keyFindRegisterStudent) / sizeof(string), 35);
 	int schoolYear = 0;
 	int semester = 0;
+	int key;
 	string idStudent;
 	inputDataFindCreditClass(schoolYear, semester, idStudent, lst);
 	
-	PTR_LISTCREDITCLASS temp = new LIST_CREDITCLASS;
-	unsigned int registerCreditClass[10];
-	int dem = 0;
-	for(int i = 0; i <= lcc->n; i++)
+	Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1);
+	cout <<"ENTER: TIEO TUC - ESC: THOAT - AN PHIM BAT KI DE NHAP LAI";
+	key = _getch();
+	if(key == ESC)
+		return;
+	else if(key == ENTER)
 	{
-		
-		if(lcc->listCreditClass[i]->shoolYear == schoolYear && lcc->listCreditClass[i]->semester == semester)
+		PTR_LISTCREDITCLASS temp = new LIST_CREDITCLASS;
+		unsigned int registerCreditClass[10];
+		int dem = 0;
+		for(int i = 0; i <= lcc->n; i++)
 		{
-			temp->listCreditClass[++temp->n] = lcc->listCreditClass[i];
+			
+			if(lcc->listCreditClass[i]->shoolYear == schoolYear && lcc->listCreditClass[i]->semester == semester)
+			{
+				temp->listCreditClass[++temp->n] = lcc->listCreditClass[i];
+			}
+			
 		}
 		
-	}
-	
-	if(temp->n == -1)
-	{
-		clrscr();
-		return;
-	}
-	
-	int key;	
-	pageNowCreditClass = 1;
-	currposCreditClass = 0;
-	currposPrecCreditClass = 0;
-	clrscr();
-	NODE_STUDENT* P = FindStudent(lst, (char*)idStudent.c_str());
-	Gotoxy(X_TITLE - 10, Y_TITLE); cout << "DANG KI LOP TIN CHI CHO SV " + (string)P->_student.fistName + " " + (string)P->_student.lastName;
-	Gotoxy(X_TITLE - 10, Y_TITLE + 1); cout << "Nhan F10 de luu toan bo cac lop da chon va F2 de chon lop tin chi moi";
-	
-	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
-	OutputListCreditClassPerPage(temp, 0);
-	
-	
-	while(true)
-	{
-		while(_kbhit())
+		if(temp->n == -1)
 		{
-			key = _getch();
-			if(key == 0 || key == 224)
+			clrscr();
+			return;
+		}
+		
+			
+		pageNowCreditClass = 1;
+		currposCreditClass = 0;
+		currposPrecCreditClass = 0;
+		clrscr();
+		NODE_STUDENT* P = FindStudent(lst, (char*)idStudent.c_str());
+		Gotoxy(X_TITLE - 10, Y_TITLE); cout << "DANG KI LOP TIN CHI CHO SV " + (string)P->_student.fistName + " " + (string)P->_student.lastName;
+		//Gotoxy(X_TITLE - 10, Y_TITLE + 1); cout << "Nhan F10 de luu toan bo cac lop da chon va F2 de chon lop tin chi moi";
+		
+		
+		
+		
+		Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
+		OutputListCreditClassPerPage(temp, 0);
+		Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
+		cout << setw(xKeyDisplay[8] - xKeyDisplay[0]-1) << setfill(' ') << " ";
+		
+		Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
+		cout << setw(xKeyDisplay[8] - xKeyDisplay[0]-1) << "F2: CHON LTC DE DANG KI - F10: LUU TOAN BO DANG KI" << setfill(' ');
+		
+		while(true)
+		{
+			while(_kbhit())
 			{
 				key = _getch();
-				if(key == KEY_F2)
+				if(key == 0 || key == 224)
 				{
-					int k = ChooseCreditClass(temp, t);
-					if(k == -1)
-					{
-						clrscr();
-						return;
-					}
-					
-					Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
-					cout << "Ban co muon dang ky LTC nay khong!";
-					
-					Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 9);
-					cout << "An ENTER neu dong y";
 					key = _getch();
-					if(key == ENTER)
+					if(key == KEY_F2)
 					{
-						bool flag = false;
-						for(int i = 0; i < dem; i++)
-						{					
-							if(registerCreditClass[i] == temp->listCreditClass[k]->idClass)
-							{
-								flag = true;
-							}	
-						}
-							
-						
-						if(flag == true)
+						int k = ChooseCreditClass(temp, t);
+						Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
+						cout << setw(xKeyDisplay[8] - xKeyDisplay[0]-1) << setfill(' ') << " ";
+		
+						Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
+						cout << setw(xKeyDisplay[8] - xKeyDisplay[0]-1) << "F2: CHON LTC DE DANG KI - F10: LUU TOAN BO DANG KI" << setfill(' ');
+						if(k == -1)
 						{
-							Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
-							cout << setw(50) << setfill(' ') << " ";
-							
-							Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 9);
-							cout << setw(50) << setfill(' ') << " ";	
-							
-							Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10); cout << "Ban da chon lop tin chi nay roi";
+							clrscr();
+							return;
 						}
-						else{
-							registerCreditClass[dem++] = temp->listCreditClass[k]->idClass;
+						
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
+						cout << "Ban co muon dang ky LTC nay khong!";
+						
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 9);
+						cout << "An ENTER neu dong y";
+						key = _getch();
+						if(key == ENTER)
+						{
+							bool flag = false;
+							for(int i = 0; i < dem; i++)
+							{					
+								if(registerCreditClass[i] == temp->listCreditClass[k]->idClass)
+								{
+									flag = true;
+								}	
+							}
+								
 							
-							Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
-							cout << setw(50) << setfill(' ') << " ";
-							
-							Gotoxy(X_NOTIFY + 10, Y_NOTIFY  - 9);
-							cout << setw(50) << setfill(' ') << " ";
-							
-							Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10); cout << "Chon lop tin chi thanh cong";
-							
-					
+							if(flag == true)
+							{
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
+								cout << setw(50) << setfill(' ') << " ";
+								
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 9);
+								cout << setw(50) << setfill(' ') << " ";	
+								
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10); cout << "Ban da chon lop tin chi nay roi";
+							}
+							else{
+								registerCreditClass[dem++] = temp->listCreditClass[k]->idClass;
+								
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
+								cout << setw(50) << setfill(' ') << " ";
+								
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY  - 9);
+								cout << setw(50) << setfill(' ') << " ";
+								
+								Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10); cout << "Chon lop tin chi thanh cong";
+								
+						
+							}
 						}
-					}
-					
-				}else if(key == KEY_F10)
-				{
-					REGISTER_STUDENT rs;
-					strcpy(rs.idStudent, idStudent.c_str());
-					rs.point = -1;
-					for(int i = 0; i < dem; i++)
-					{				
-						AddTailListRegister(lcc->listCreditClass[i]->listRegisterStudent, rs);
-					}
-					
-					Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
-					cout << setw(50) << setfill(' ') << " ";
-							
-					Gotoxy(X_NOTIFY + 10, Y_NOTIFY  - 9);
-					cout << setw(50) << setfill(' ') << " ";
-					
-					Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10); cout << "Dang ky thanh cong";
-					Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 9); cout << "An phim bat ky de thoat";
-					_getch();
-					return;
-				}	                     
-			}
-		}  	                     
-	}   	                 
+						
+					}else if(key == KEY_F10)
+					{
+						REGISTER_STUDENT rs;
+						strcpy(rs.idStudent, idStudent.c_str());
+						rs.point = -1;
+						for(int i = 0; i < dem; i++)
+						{				
+							AddTailListRegister(lcc->listCreditClass[i]->listRegisterStudent, rs);
+						}
+						
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10);
+						cout << setw(50) << setfill(' ') << " ";
+								
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY  - 9);
+						cout << setw(50) << setfill(' ') << " ";
+						
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10); cout << "Dang ky thanh cong";
+						Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 9); cout << "An phim bat ky de thoat";
+						_getch();
+						return;
+					}	                     
+				}
+			}  	                     
+		} 	
+	}else goto backMenu;
+	  	                 
                                       
 
 

@@ -50,10 +50,11 @@ void InitListStudent(LIST_STUDENT &l)
 
 void AddHeadListStudent(LIST_STUDENT &l, STUDENT data)
 {
-	NODE_STUDENT* p = GetNodeStudent(data);
-	
+
+	NODE_STUDENT *p = GetNodeStudent(data);
 	p->pNext = l.pHead;
 	l.pHead = p;
+
 	++l.n;
 }
 
@@ -68,12 +69,12 @@ void AddTailListStudent(LIST_STUDENT &l, STUDENT data)
 	NODE_STUDENT* p = GetNodeStudent(data);
 	if(l.pHead == NULL)
 	{
-		l.pHead = l.pTail = p;
+		l.pHead = l.pTail = p;		
 	}
 	else
 	{
 		l.pTail->pNext = p;
-		l.pTail = p;
+		l.pTail = p;	
 	}
 
 	++l.n;
@@ -88,7 +89,7 @@ NODE_STUDENT* FindStudent(LIST_STUDENT l, char* id)
 	if(l.pHead == NULL) return NULL;
 	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
 	{
-		if (strcmpi(p->_student.idStudent, id) == 0)
+		if (_strcmpi(p->_student.idStudent, id) == 0)
 			return p;
 	}
 	return NULL;
@@ -140,6 +141,37 @@ void InsertAfter(NODE_STUDENT* p, STUDENT &data)
 	q->pNext = p->pNext;
 	p->pNext = q;
 }
+
+
+//insert order
+void InsertOrderForListStudent(LIST_STUDENT &l, STUDENT data)
+{
+	
+	if(l.pHead == NULL)
+	{	
+		AddHeadListStudent(l, data);
+		return;
+	}
+	
+	NODE_STUDENT *p, *pAfter, *pBefore;
+	
+	p = GetNodeStudent(data);
+	
+	//pAfter = pBefore->pNext;
+	
+	for(pAfter = l.pHead; pAfter != NULL && (strcmpi(pAfter->_student.idStudent, data.idStudent) < 0); pBefore = pAfter, pAfter = pAfter->pNext);
+	
+	if(pAfter == l.pHead) // Add Head
+		AddHeadListStudent(l, p->_student);
+	else // them nut p vao truoc nut s
+	{
+		p->pNext = pAfter;
+		pBefore->pNext = p;
+		++l.n;
+	}
+	
+}
+
 
 // xoa dau - delete head
 bool IsDeletedHead(LIST_STUDENT &l)
@@ -257,46 +289,53 @@ void OutputStudent(STUDENT st, int locate)
 	Gotoxy(xKeyDisplay[5] + 1, Y_DISPLAY + 3 + locate); cout << st.yearAdmission;
 }
 
-void OutputListStudentWithIdClass(LIST_STUDENT l, char* idClass)
-{
+//void OutputListStudentWithIdClass(LIST_STUDENT l, char* idClass)
+//{
+//	if(l.pHead == NULL && l.pTail == NULL) return;
+//	int count = -1;
+//	
+//	for(NODE_STUDENT* q = l.pHead; q->pNext == NULL; q=q->pNext)
+//	{
+//		count++;
+//		if(count == index)
+//		{
+//			int i = -1;
+//			while( q != NULL && i < QUANTITY_PER_PAGE - 1)
+//			{
+//				OutputStudent(q->_student, (++i) * 2);
+//				q = q->pNext;
+//			}
+//			break;
+//		}		
+//	}
+//}
+	
+void OutputListStudentWithIdClassPerPage(LIST_STUDENT l, int indexBegin, char* idClass)
+{	
+	
 	if(l.pHead == NULL && l.pTail == NULL) return;
 	int count = -1;
 	
-	for(NODE_STUDENT* q = l.pHead; q != NULL; q=q->pNext)
+	for(NODE_STUDENT* q = l.pHead; q != NULL; q = q->pNext)
 	{
-		if(strcmp(q->_student.idClass, idClass) == 0)
-		{
-			count++;
-			OutputStudent(q->_student, count);
-		}		
-	}
-}
-	
-void OutputListStudentWithIdClassPerPage(LIST_STUDENT l, int indexBegin, char* idClass)
-{
-	if (l.pHead == NULL && l.pTail == NULL) return;
-	int count = -1;
-	
-	for(NODE_STUDENT* q = l.pHead; q != NULL; q=q->pNext)
-	{
-		if(strcmp(q->_student.idClass, idClass) == 0)
+		if(_strcmpi(q->_student.idClass, idClass) == 0)
 		{
 			count++;
 			if(count == indexBegin)
 			{
-				int i = -1; 
-				while (q != NULL && i < QUANTITY_PER_PAGE - 1)
-				{
+				int i = -1;
+				while( q != NULL && i < QUANTITY_PER_PAGE - 1)
+				{	
 					OutputStudent(q->_student, (++i) * 2);
 					q = q->pNext;
 				}
 				break;
 			}
 		}
-		
-			
+				
 	}
 	
+	totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
 	Gotoxy(X_PAGE, Y_PAGE);
 	cout << "Trang " << pageNowStudent << "/" << totalPageStudent;
 	return;
@@ -400,7 +439,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 			Gotoxy(X_NOTIFY, Y_NOTIFY);			
 			cout << setw(50) << setfill(' ') << " ";
 			if(idStudent.empty()) return;
-			if(idStudent.empty() || sex == 0 || firstName.empty() || lastName.empty() || yearAdmission == 0 || phoneNumber.empty() )
+			if(sex == 0 || firstName.empty() || lastName.empty() || yearAdmission == 0 || phoneNumber.empty() )
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY);
 				cout << "Cac truong du lieu khong dc de trong";
@@ -433,7 +472,8 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 					p->_student = st;
 				}else
 				{
-					AddTailListStudent(l, st);				
+					//	AddTailListStudent(l, st);
+					InsertOrderForListStudent(l, st);				
 				}
 				totalPageStudent =((l.n - 1) / QUANTITY_PER_PAGE) + 1;
 				DeleteMenuAdd();
@@ -551,6 +591,8 @@ void ChangePageManageStudent(LIST_STUDENT l, char* idClass)
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + (string)idClass ;
 	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
+	//OutputListStudentWithIdClass(l, idClass);
+	totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
 	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
 }
 
@@ -567,95 +609,100 @@ backMenu:
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY);
 	cout << "BAN CO MUON SUA LAI MA LOP";
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1);
-	cout <<"ENTER NEU MA LOP DA DUNG HOAC NHAN PHIM BAT KI DE NHAP LAI";
+	cout <<"ENTER: TIEO TUC - ESC: THOAT - AN PHIM BAT KI DE NHAP LAI";
 	key = _getch();
-	if(key == ENTER) break;
-	else if(key == ESC)
+	if(key == ESC)
 		return;
-	else goto backMenu;
-	clrscr();
-	OutputListStudentWithIdClassPerPage(l, 0, (char*)idClass.c_str());
-	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-	
-	
-	
-	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass ;
-	
-	while(true)
+	else if(key == ENTER)
 	{
-		while(_kbhit())
+		clrscr();
+		OutputListStudentWithIdClassPerPage(l, 0, (char*)idClass.c_str());
+		//OutputListStudentWithIdClass(l, (char*)idClass.c_str());
+		Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
+		
+		
+		
+		Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass ;
+		
+		while(true)
 		{
-			key = _getch();
-			if (key == 0 || key == 224)
+			while(_kbhit())
 			{
 				key = _getch();
-				if(key == KEY_F2)
-				{	
-					STUDENT st;
-					strcpy(st.idClass, idClass.c_str());
-					DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
-					InputStudent(l, st, false);
-					
-					string ids = (string)st.idStudent;
-					if(ids.empty()) return;
-					
-					totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
-					ChangePageManageStudent(l, (char*)idClass.c_str());
-					Gotoxy(X_NOTIFY, Y_NOTIFY);
-					cout << "Them thanh cong";
-				}
-				else if( key == KEY_F3)
+				if (key == 0 || key == 224)
 				{
-					NODE_STUDENT* k = ChooseStudent(l,(char*)idClass.c_str());
-					if(k == NULL) goto backMenu;
-					
-					Gotoxy(X_NOTIFY, Y_NOTIFY);
-					cout << "Ban co chac chan xoa? Enter dong y";
 					key = _getch();
-					if(key == ENTER)
+					if(key == KEY_F2)
+					{	
+						STUDENT st;
+						strcpy(st.idClass, idClass.c_str());
+						DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
+						InputStudent(l, st, false);
+						
+						string ids = (string)st.idStudent;
+						if(ids.empty()) return;
+						
+						
+						ChangePageManageStudent(l, (char*)idClass.c_str());
+						Gotoxy(X_NOTIFY, Y_NOTIFY);
+						cout << "Them thanh cong";
+					}
+					else if( key == KEY_F3)
 					{
-						if(IsDeletedStudentWithId(l, k->_student))
+						NODE_STUDENT* k = ChooseStudent(l,(char*)idClass.c_str());
+						if(k == NULL) goto backMenu;
+						
+						Gotoxy(X_NOTIFY, Y_NOTIFY);
+						cout << "Ban co chac chan xoa? Enter dong y";
+						key = _getch();
+						if(key == ENTER)
 						{
-							totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
-							if(l.n % QUANTITY_PER_PAGE == 0) pageNowStudent--;
-							ChangePageManageStudent(l, (char*)idClass.c_str());
-							Gotoxy(X_NOTIFY, Y_NOTIFY);
-							cout << "Xoa thanh cong";
-						}
-					}else goto backMenu;
+							if(IsDeletedStudentWithId(l, k->_student))
+							{
+								totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
+								if(l.n % QUANTITY_PER_PAGE == 0) pageNowStudent--;
+								ChangePageManageStudent(l, (char*)idClass.c_str());
+								Gotoxy(X_NOTIFY, Y_NOTIFY);
+								cout << "Xoa thanh cong";
+							}
+						}else goto backMenu;
+					}
+					else if( key == KEY_F4)
+					{
+						NODE_STUDENT* k = ChooseStudent(l, (char*)idClass.c_str());
+						if(k == NULL) goto backMenu;
+						
+						DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
+						InputStudent(l, k->_student, true);
+						clrscr();
+						Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
+						OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, (char*)idClass.c_str());
+						Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass;
+						Gotoxy(X_NOTIFY, Y_NOTIFY);
+						cout << "Sua thanh cong";
+					}
+					else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
+					{
+						pageNowStudent++;
+						ChangePageManageStudent(l, (char*)idClass.c_str());
+					}
+					else if(key == PAGE_UP && pageNowStudent > 1)
+					{
+						pageNowStudent--;
+						ChangePageManageStudent(l, (char*)idClass.c_str());
+					}
 				}
-				else if( key == KEY_F4)
+				else if(key == ESC)
 				{
-					NODE_STUDENT* k = ChooseStudent(l, (char*)idClass.c_str());
-					if(k == NULL) goto backMenu;
-					
-					DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
-					InputStudent(l, k->_student, true);
-					clrscr();
-					Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, (char*)idClass.c_str());
-					Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass;
-					Gotoxy(X_NOTIFY, Y_NOTIFY);
-					cout << "Sua thanh cong";
-				}
-				else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
-				{
-					pageNowStudent++;
-					ChangePageManageStudent(l, (char*)idClass.c_str());
-				}
-				else if(key == PAGE_UP && pageNowStudent > 1)
-				{
-					pageNowStudent--;
-					ChangePageManageStudent(l, (char*)idClass.c_str());
+					return;
 				}
 			}
-			else if(key == ESC)
-			{
-				return;
-			}
+			
 		}
-		
 	}
+	else
+	 goto backMenu;
+	
 	
 }
 

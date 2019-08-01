@@ -125,7 +125,7 @@ void OutputListCreditClassPerPage(PTR_LISTCREDITCLASS l, int indexBegin)
 void DeleteCreditClass(PTR_LISTCREDITCLASS &l, unsigned int id)
 {
 	int index = FindIndexClass(l, id);
-	
+	delete l->listCreditClass[index];
 	if(index == -1)return;
 	if(l->listCreditClass[index]->listRegisterStudent.pHead != NULL) return;
 	
@@ -134,6 +134,7 @@ void DeleteCreditClass(PTR_LISTCREDITCLASS &l, unsigned int id)
 		l->listCreditClass[i] = l->listCreditClass[i + 1];
 		
 	}
+	
 	l->n--;
 	
 }
@@ -355,6 +356,9 @@ int ChooseCreditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 	currposPrecCreditClass = 0;
 	
 	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
+	
+	
+	
 	OutputListCreditClassPerPage(l, 0);
 	SetDefaultChosenCreditClass(l, currposCreditClass);
 	
@@ -425,7 +429,7 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 	backMenu:
 		clrscr();
 		pageNowCreditClass = 1;
-		
+		totalPageCreditClass = 0;
 		OutputListCreditClassPerPage(l, 0);
 		
 		Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
@@ -433,6 +437,7 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 		
 		Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
 		Gotoxy(X_PAGE, Y_PAGE);
+		totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
 		cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
 		while(true)
 		{

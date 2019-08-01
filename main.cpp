@@ -28,9 +28,34 @@ int main()
 	SaveCreditClassToFile(listCC);
 	SaveStudentToFile(l);
 	SaveSubjectToFile(t);
-//     	int a = 10;
-//     	int c = 9;
-//     	float b = a + ((float)c / 10);
+////     	int a = 10;
+////     	int c = 9;
+////     	float b = a + ((float)c / 10);
 //	cout << b;
+
+//	LIST_STUDENT l;
+//	InitListStudent(l);
+//	STUDENT st;
+////	st.yearAdmission = 2017;
+////	string fistName = "dang";
+////	string lastName = "ki";
+////	strcmp(st.fistName, (char*)fistName.c_str());
+////	strcmp(st.lastName, (char*)lastName.c_str());
+//	
+//	string idStudent = "cda";
+//	strcpy(st.idStudent, (char*)idStudent.c_str());
+//	InsertOrderForListStudent(l, st);
+//	
+//	//cout << l.pHead->_student.idStudent;
+//	STUDENT st1;
+//	string idStudent1 = "abc";
+//	strcpy(st1.idStudent, (char*)idStudent1.c_str());
+//	InsertOrderForListStudent(l, st1);
+//	
+//	STUDENT st2;
+//	string id2 = "bca";
+//	strcpy(st2.idStudent, (char*)id2.c_str());
+//	InsertOrderForListStudent(l, st2);
+//	cout << l.pHead->pNext->_student.idStudent;
 	return 0;
 }
