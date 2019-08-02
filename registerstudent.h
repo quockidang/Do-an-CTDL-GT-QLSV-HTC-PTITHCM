@@ -2,7 +2,7 @@
 #define _REGISTERSTUDENT_H
 
 #include "subject.h"
-
+#include "student.h"
 struct RegisterStudent {
 	char idStudent[12];
 	float point;

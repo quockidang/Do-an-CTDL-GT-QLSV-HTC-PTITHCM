@@ -31,8 +31,6 @@
 #define Y_TITLE 1
 
 
-#define X_MENU_TICKET 20
-#define Y_MENU_TICKET 4
 
 #define X_PAGE 20
 #define Y_PAGE 46

@@ -28,7 +28,7 @@ int indexOutSubject = -1;
 // ........................define tree subject...................
 
 SUBJECT arrSubject[200];
-
+ 
 
 // khoi tao cay nhi phan
 void InitTreeSubject(TREE_SUBJECT &root)
