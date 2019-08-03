@@ -3,13 +3,13 @@
 //#include"creditclass.h"
 
 struct student{
-	char idStudent[12];
-	char idClass[15];
-	char fistName[20], lastName[10];
+	char idStudent[13];
+	char idClass[16];
+	char fistName[21], lastName[11];
 	int sex = 1; // 1 male, 2 female
-	char phoneNUmber[12];
+	char phoneNUmber[13];
 	int yearAdmission; // nam nhap hoc
-	float mediumScore;
+	float mediumScore = 0.0;
 	
 };
 typedef struct student STUDENT;
@@ -89,11 +89,44 @@ NODE_STUDENT* FindStudent(LIST_STUDENT l, char* id)
 	if(l.pHead == NULL) return NULL;
 	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
 	{
-		if (_strcmpi(p->_student.idStudent, id) == 0)
+		if (strcmp(p->_student.idStudent, id) == 0)
 			return p;
 	}
 	return NULL;
 }
+NODE_STUDENT* BinarySearchStudent(LIST_STUDENT l, char* id)
+{ 
+	NODE_STUDENT* start = l.pHead;
+	NODE_STUDENT* last = NULL;
+	int n = l.n;
+	int middle = n/2;
+	if(l.pHead == NULL) return NULL;
+	do
+	{	
+		NODE_STUDENT* p = start;
+		for ( int i = 0; i < middle ; i++)
+			p=p->pNext;
+	
+		if (strcmp(p->_student.idStudent, id) == 0)
+			return p;
+		
+		else if (strcmp(p->_student.idStudent, id) < 0)
+		{		
+			middle =  middle / 2;		
+			start = p->pNext;
+			
+		}
+		else
+		{	
+			middle = middle / 2;
+			last = p;
+		}
+	} 
+	while ( start != last);
+	return NULL; // value not present;
+
+}
+
 
 
 // tim index cua sinh vien
@@ -104,7 +137,7 @@ int FindIndexStudent(LIST_STUDENT l, char *id)
 	for(NODE_STUDENT *p = l.pHead; p != NULL; p = p->pNext)
 	{
 		++index;
-		if(_strcmpi(p->_student.idStudent, id) == 0);
+		if(strcmp(p->_student.idStudent, id) == 0);
 			return index;
 	}
 	return 0;
@@ -159,7 +192,7 @@ void InsertOrderForListStudent(LIST_STUDENT &l, STUDENT data)
 	
 	//pAfter = pBefore->pNext;
 	
-	for(pAfter = l.pHead; pAfter != NULL && (strcmpi(pAfter->_student.idStudent, data.idStudent) < 0); pBefore = pAfter, pAfter = pAfter->pNext);
+	for(pAfter = l.pHead; pAfter != NULL && (strcmp(pAfter->_student.idStudent, data.idStudent) < 0); pBefore = pAfter, pAfter = pAfter->pNext);
 	
 	if(pAfter == l.pHead) // Add Head
 		AddHeadListStudent(l, p->_student);
@@ -318,24 +351,18 @@ void OutputListStudentWithIdClassPerPage(LIST_STUDENT l, int indexBegin, char* i
 	
 	for(NODE_STUDENT* q = l.pHead; q != NULL; q = q->pNext)
 	{
-		if(_strcmpi(q->_student.idClass, idClass) == 0)
+		if(strcmpi(q->_student.idClass, idClass) == 0)
 		{
 			count++;
-			if(count == indexBegin)
+			if(count == indexBegin && count < QUANTITY_PER_PAGE)
 			{
-				int i = -1;
-				while( q != NULL && i < QUANTITY_PER_PAGE - 1)
-				{	
-					OutputStudent(q->_student, (++i) * 2);
-					q = q->pNext;
-				}
-				break;
+				OutputStudent(q->_student, count * 2);
 			}
 		}
 				
 	}
 	
-	totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
+	totalPageStudent = (count / QUANTITY_PER_PAGE) + 1;
 	Gotoxy(X_PAGE, Y_PAGE);
 	cout << "Trang " << pageNowStudent << "/" << totalPageStudent;
 	return;
@@ -392,8 +419,9 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		switch(ordinal)
 		{
 			case 0:
+				if(isEdited) break;
 				CheckMoveAndValidateID(idStudent, isMoveUp, ordinal, isSave, 20 + 7, 12);
-				if(isEdited && _stricmp(idStudent.c_str(), st.idStudent) == 0) break;
+				
 				if(FindStudent(l, (char *)idStudent.c_str()) == NULL)
 				{
 					idIsExist = false;
@@ -592,7 +620,7 @@ void ChangePageManageStudent(LIST_STUDENT l, char* idClass)
 	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + (string)idClass ;
 	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
 	//OutputListStudentWithIdClass(l, idClass);
-	totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
+
 	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
 }
 

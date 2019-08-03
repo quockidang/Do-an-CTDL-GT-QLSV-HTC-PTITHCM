@@ -208,7 +208,7 @@ void CheckMoveAndValidateNameSubject(string &result, bool &isMove, int &ordinal,
 			int key = _getch();
 			if (key != 224  && key != 0)
 			{
-				if ((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key == SPACE || (key >= 48 && key <= 57) || key == 46 )
+				if ((key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key == SPACE || (key >= 48 && key <= 57) || key == 46 || key == 38)
 				{
 					if (count < condition)
 					{

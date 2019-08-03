@@ -3,12 +3,13 @@
 
 #include "registerstudent.h"
 #include "display.h"
+//#include "processstemp.h"
 // define DS LTC
 
 struct CreditClass{
 	unsigned int idClass;
-	char idSubject[10]; // ma mon hoc // key
-	char nameSubject[30];
+	char idSubject[11]; // ma mon hoc // key
+	char nameSubject[31];
 	int shoolYear; // nien khoa
 	int semester; // hoc ki
 	int group; // nhom
@@ -33,7 +34,7 @@ typedef LIST_CREDITCLASS* PTR_LISTCREDITCLASS;
 
  //-----------------define temp
  // Tim kiem lop dua tren id -- find class with id
-PTR_CREDITCLASS FindCreditClass(PTR_LISTCREDITCLASS l, unsigned int id)
+PTR_CREDITCLASS FindCreditClassWithBinariSearch(PTR_LISTCREDITCLASS l, unsigned int id)
 {
 	if(l->n < 0) return NULL;
 	for(int i = 0; i <= l->n; i++)
@@ -42,6 +43,22 @@ PTR_CREDITCLASS FindCreditClass(PTR_LISTCREDITCLASS l, unsigned int id)
 			return l->listCreditClass[i];
 		return NULL;
 	}
+}
+
+PTR_CREDITCLASS BinarySearchCreditClass(PTR_LISTCREDITCLASS l, int n, unsigned int id)
+{ // Ph?m vi ban d?u tìm ki?m là t? left=0 ?right =n-1
+	int left=0;
+	int right=n;
+	int j;
+	while (left <= right)
+	{ 
+		j=(left + right) /2; 
+		if (l->listCreditClass[j]->idClass == id) return l->listCreditClass[j];
+		if (id > l->listCreditClass[j]->idClass)
+			left=j+1;
+		else right=j-1;
+	}
+	return NULL;
 }
 
 int FindCreditClassWithIdSubject(PTR_LISTCREDITCLASS l, char* idSubject)
@@ -154,6 +171,21 @@ bool DeleteCreditClassIsSuccess(PTR_LISTCREDITCLASS &l, unsigned int id)
 	l->n--;
 	return true;
 }
+PTR_CREDITCLASS FindCrediClassWithCondition(PTR_LISTCREDITCLASS l, char* idSubject, int shoolYear, int semester, int group)
+{
+
+	for(int i = 0; i <= l->n; i++)
+	{
+		if(strcmp(l->listCreditClass[i]->idSubject,idSubject) == 0 &&
+			l->listCreditClass[i]->shoolYear == shoolYear && l->listCreditClass[i]->semester == semester && l->listCreditClass[i]->group == group)
+		{
+			return l->listCreditClass[i];
+		}
+	}
+	return NULL;
+}
+
+
 
 void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t, bool isEdited = false) // nhap  Lop TC
 {
@@ -213,13 +245,6 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t
 											
 			case 0:
 				CheckMoveAndValidateID(idSubject, isMoveUp, ordinal, isSave, 27, 10);
-				if(FindSubject(t, (char*)idSubject.c_str()) == NULL)
-				{
-					idIsExist = false;
-					break;
-				}
-				else
-					idIsExist = true;
 				break;
 				
 			case 1:
@@ -230,7 +255,7 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t
 				break;
 			case 3:
 				CheckMoveAndValidateNumber(group,isMoveUp, ordinal, isSave,26, 3);
-				break;
+				break;					
 			case 4:
 				CheckMoveAndValidateNumber(studentMax,isMoveUp, ordinal, isSave,27, MAX_STUDENT);
 				break;
@@ -266,13 +291,16 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t
 			temp->studentMin = studentMin;
 			temp->group = group;
 			
-			if(!idIsExist)
-			{
-				Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
-				cout << "Ma MH KHONG TON TAI";
-			}else if (dataCreditClassIsEmty(temp))
+			if (dataCreditClassIsEmty(temp))
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Cac truong du lieu khong duoc de trong";
+			}
+			else if(FindCrediClassWithCondition(l, (char*)idSubject.c_str(), shoolYear, semester, group) != NULL)
+			{
+				Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Lop tin chi da ton tai";
+			}else if(studentMax < studentMin)
+			{
+				Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "So luong sinh vien khong hop le";
 			}
 			else
 			{
@@ -452,6 +480,7 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 						PTR_CREDITCLASS cc = new CREDITCLASS;
 						DisplayEdit(keyDisplayCreaditClassEdit, sizeof(keyDisplayCreaditClassEdit) / sizeof(string), 35);
 						InputCreditClass(l, cc, t);
+						
 						clrscr();
 						
 						Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));		

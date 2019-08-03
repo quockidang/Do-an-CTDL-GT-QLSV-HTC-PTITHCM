@@ -1,57 +1,29 @@
-13
-INT21
-CTDL GT
+6
+int21
+CTDL&GT 
 1
 2
-INT112
-CSDL
+int201
+Co so du lieu
 1
 2
-INT011
-LAP TRINH ANDROID
-1
-2
-1
-1
-1
-1
+INT503
+lap trinh game co ban
 2
 2
-2
-2
-123
-12
-1
-3
-123123
-1
-1
-1
-3
-2
-2
-2
-23
-1
-1
-1
-33
-3
-3
-3
-INT150
-LAP TRINH HUONG DOI TUONG
-1
-2
-INT561
-KI THUAT DO HOA
-1
-3
-INT321
-LAP TRINH C CO BAN
+int203
+lap trinh huong doi tuong
 2
 1
-fqweqe
+int261
+Ki thuat do hoa
 1
 1
+int431
+ki nang thuyet trinh
 1
+2
+int31
+Co so du lieu phan tan
+1
+2

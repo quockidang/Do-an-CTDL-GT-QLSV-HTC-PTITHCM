@@ -148,27 +148,7 @@ void input(string &idSubject, int &shoolYear, int &semester, int &group, TREE_SU
 	}
 }
 
-PTR_CREDITCLASS FindCrediClassWithCondition(PTR_LISTCREDITCLASS l, char* idSubject, int shoolYear, int semester, int group)
-{
-	PTR_LISTCREDITCLASS temp = new LIST_CREDITCLASS;
-	PTR_CREDITCLASS p = new CREDITCLASS;
-	for(int i = 0; i <= l->n; i++)
-	{
-		if(strcmp(l->listCreditClass[i]->idSubject,idSubject) == 0)
-		{
-			cout << l->listCreditClass[i]->listRegisterStudent.pHead->_registerStudent.idStudent;
-			temp->listCreditClass[++temp->n] = l->listCreditClass[i];
-		}
-	}
-	
-	for(int j = 0; j <= temp->n; j++)
-	{
-		if(temp->listCreditClass[j]->shoolYear = shoolYear && temp->listCreditClass[j]->semester == semester && temp->listCreditClass[j]->group == group)
-			p =  temp->listCreditClass[j];
-	}
-	delete temp;
-	return p;
-}
+
 // end output list student on register credit class
 
 // input score for student register credit class
@@ -189,13 +169,14 @@ void outputListScoreCreditClassPerPage(LIST_REGISTERSTUDENT lrs, LIST_STUDENT ls
 	
 	for(NODE_REGISTERSTUDENT* q = lrs.pHead; q != NULL; q = q->pNext)
 	{
-		NODE_STUDENT* p = FindStudent(ls, q->_registerStudent.idStudent);
+		
 		counts++;
 		if(counts == indexBegin)
 		{
 			int i = -1; 
 			while (q != NULL && i < QUANTITY_PER_PAGE - 1)
 			{
+				NODE_STUDENT* p = FindStudent(ls, q->_registerStudent.idStudent);
 				outputScoreCretdiClass(p->_student, q->_registerStudent, (++i) * 2);
 				q = q->pNext;
 			}
@@ -384,6 +365,31 @@ void  inputScoreCreditClass(LIST_REGISTERSTUDENT &lrs, REGISTER_STUDENT &rs) // 
 	
 }	
  // end input score
+
+// output score of credit class
+void outputListScoreCreditClassPerPage1(LIST_REGISTERSTUDENT lrs, LIST_STUDENT ls, int indexBegin)
+{
+	if(lrs.n == 0) return;
+	int counts = 0;
+	
+	for(NODE_REGISTERSTUDENT* q = lrs.pHead; q != NULL; q = q->pNext)
+	{
+		NODE_STUDENT* p = BinarySearchStudent(ls, q->_registerStudent.idStudent);
+		
+		if(counts == indexBegin && q->_registerStudent.point != -1 && counts < QUANTITY_PER_PAGE - 1)
+		{
+			outputScoreCretdiClass(p->_student, q->_registerStudent, (counts++) * 2);
+		}
+	}
+	
+	Gotoxy(X_PAGE, Y_PAGE);
+	cout << "Trang " << pageNowStudent << "/" << totalPageStudent;
+	
+}
+
+//end
+
+
 
 //  output score subject of class
 float MediumScoreOfStudent(PTR_LISTCREDITCLASS lcc, TREE_SUBJECT t, char* idStudent)

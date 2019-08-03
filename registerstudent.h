@@ -4,8 +4,8 @@
 #include "subject.h"
 #include "student.h"
 struct RegisterStudent {
-	char idStudent[12];
-	float point;
+	char idStudent[13];
+	float point = -1;
 };
 
 typedef struct RegisterStudent REGISTER_STUDENT;
@@ -70,7 +70,7 @@ NODE_REGISTERSTUDENT* FindRegisterStudent(LIST_REGISTERSTUDENT l, char *id)
 	if(l.pHead == NULL) return NULL;
 	for(NODE_REGISTERSTUDENT *p = l.pHead; p != NULL; p = p->pNext)
 	{
-		if (_strcmpi(p->_registerStudent.idStudent, id) == 0)
+		if (strcmp(p->_registerStudent.idStudent, id) == 0)
 			return p;
 	}
 	return NULL;
@@ -100,7 +100,7 @@ int FindIndexRegister(LIST_REGISTERSTUDENT l, char* id)
 	for (NODE_REGISTERSTUDENT *p = l.pHead; p != NULL; p = p->pNext)
 	{
 		++index;
-		if (_strcmpi(p->_registerStudent.idStudent, id) == 0)
+		if (strcmp(p->_registerStudent.idStudent, id) == 0)
 			return index;
 	}
 	return 0;
