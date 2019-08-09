@@ -1,7 +1,8 @@
 #ifndef _PROCESSSTEMP_H
 #define _PROCESSSTEMP_H
 #include "creditclass.h"
-
+#include "subject.h"
+#include <sstream>
 // regsiter credit class  
 void inputDataFindCreditClass(int &schoolYear, int &semester, string &idStudent, LIST_STUDENT l) // input data
 {
@@ -301,93 +302,64 @@ NODE_REGISTERSTUDENT* ChooseStudentForScoreCreditClass(LIST_STUDENT ls, LIST_REG
 void ChangePageManageScore(LIST_STUDENT ls, LIST_REGISTERSTUDENT lrs, NODE_SUBJECT* p)
 {
 	clrscr();
+	
 	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP DIEM CHO SINH VIEN LTC CO TEN MON HOC LA: " << + p->_subject.nameSubject;
 	outputListScoreCreditClassPerPage(lrs, ls, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
 	Display(keyDisplayInputScoreCreditClass, sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
 }
 
-void  inputScoreCreditClass(LIST_REGISTERSTUDENT &lrs, REGISTER_STUDENT &rs) // nhap  Lop TC
+bool Check_STN(string s)
 {
-	ShowCur(true);
-	float res;
-	// cac flag dieu khien qua trinh cap nhat
-	int ordinal = 0;
-	bool isMoveUp = false;
-	bool isSave = false;
-	
-	int original = 0; // nien khoa
-	int decimal = 0; // hoc ki 
-	
-	while(true)
+	bool flag = true;
+	for(int i = 0; i< s.length(); i++)
 	{
-		switch(ordinal)
+		if (s[i] >= '0' && s[i] <= '9' )
 		{
-			case 0:
-				CheckMoveAndValidateNumber(original,isMoveUp, ordinal, isSave,27 + 6, 10);
-				break;
-			case 1:
-				CheckMoveAndValidateNumber(decimal,isMoveUp, ordinal, isSave,27 + 8, 99);
-				break;				
-		}
-		
-		if (isMoveUp)
+			flag = true;
+		}else
 		{
-			if (ordinal == 0)
-				isMoveUp = false;
-			ordinal--;
-
+			flag = false;
+			break;
 		}
-		else
-		{
-			if (ordinal == 1)
-				isMoveUp = true;
-			ordinal++;
-		}
-		if (isSave)
-		{	
-			if(decimal < 10)
-			{
-				res = original + ((float)decimal / 10);
-			}else
-				res = original + ((float)decimal / 100);
-			
-			rs.point = res;
-			
-			NODE_REGISTERSTUDENT* rsx = FindRegisterStudent(lrs, rs.idStudent);
-			rsx->_registerStudent = rs;
-			DeleteMenuAdd();
-			return;
-		}
-		else
-			isSave = false;
 	}
-	ShowCur(false);
+	return flag;
+}
+
+bool isFloat( string myString ) {
+    std::istringstream iss(myString);
+    float f;
+    iss >> noskipws >> f; // noskipws considers leading whitespace invalid
+    // Check the entire string was consumed and if either failbit or badbit is set
+    return iss.eof() && !iss.fail(); 
+}
+void  inputScoreCreditClass(LIST_REGISTERSTUDENT &lrs, REGISTER_STUDENT &rs) // nhap  Lop TC
+{	
+backMenu:	
+	string res;
+	fflush(stdin);
+	Gotoxy(X_ADD + 26, Y_ADD);
+	getline(cin, res);
+			
+	if(isFloat(res))
+	{
+		rs.point = atof((char*)res.c_str());				
+		NODE_REGISTERSTUDENT* rsx = FindRegisterStudent(lrs, rs.idStudent);
+		rsx->_registerStudent = rs;
+		return;
+	}else
+	{
+		Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "diem khong hop le";
+		Gotoxy(X_ADD + 26, Y_ADD);
+		cout << setw(8) << setfill(' ') << " ";
+		goto backMenu;
+	}
+		
+			
+
 	
 }	
  // end input score
 
-// output score of credit class
-void outputListScoreCreditClassPerPage1(LIST_REGISTERSTUDENT lrs, LIST_STUDENT ls, int indexBegin)
-{
-	if(lrs.n == 0) return;
-	int counts = 0;
-	
-	for(NODE_REGISTERSTUDENT* q = lrs.pHead; q != NULL; q = q->pNext)
-	{
-		NODE_STUDENT* p = BinarySearchStudent(ls, q->_registerStudent.idStudent);
-		
-		if(counts == indexBegin && q->_registerStudent.point != -1 && counts < QUANTITY_PER_PAGE - 1)
-		{
-			outputScoreCretdiClass(p->_student, q->_registerStudent, (counts++) * 2);
-		}
-	}
-	
-	Gotoxy(X_PAGE, Y_PAGE);
-	cout << "Trang " << pageNowStudent << "/" << totalPageStudent;
-	
-}
-
-//end
 
 
 
@@ -396,20 +368,21 @@ float MediumScoreOfStudent(PTR_LISTCREDITCLASS lcc, TREE_SUBJECT t, char* idStud
 {
 	float totalScore = 0;
 	int totalCredit = 0;
-	for(int i = 0; i < lcc->n; i++)
+	for(int i = 0; i <= lcc->n; i++)
 	{
-		for(NODE_REGISTERSTUDENT* p = lcc->listCreditClass[i]->listRegisterStudent.pHead; p != NULL; p = p->pNext)
-		{
-			if(p->_registerStudent.idStudent == idStudent)
+		NODE_REGISTERSTUDENT* p = BinarySearchRegisterStudent(lcc->listCreditClass[i]->listRegisterStudent, idStudent);
+		if(p == NULL)continue;
+		else{
+			
+			if(p->_registerStudent.point != -1)
 			{
-				totalScore += p->_registerStudent.point;
-				NODE_SUBJECT* temp = FindSubject(t, lcc->listCreditClass[i]->idSubject);
-				totalCredit += (temp->_subject.numberPractice + temp->_subject.numberTheory);
-			}
+				NODE_SUBJECT* q = FindSubject(t, lcc->listCreditClass[i]->idSubject);				
+				totalCredit += q->_subject.numberPractice + q->_subject.numberTheory;
+				totalScore += p->_registerStudent.point * (q->_subject.numberPractice + q->_subject.numberTheory);
+			}			
 		}
 	}
-	float res = totalScore / (float)totalCredit;
-	return res;
+	return (totalScore / (float)totalCredit);
 }
 
 void outputMediumScoreOfStudent(STUDENT _student, int ordinal)
@@ -451,13 +424,44 @@ void ChangePageManageStudent(LIST_STUDENT l, string idClass, int schoolYear)
 {
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "BANG THONG KE DIEM TRUNG BINH KHOA HOC";
-	Gotoxy(X_TITLE + 1, Y_TITLE); cout << "Lop: " << idClass << "Nam nhap hoc: " << schoolYear ;
+	Gotoxy(X_TITLE + 2, Y_TITLE + 1); cout << "Lop: " << idClass << "  - Nam nhap hoc: " << schoolYear ;
 	outputMediumScoreOfStudentPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
-	//OutputListStudentWithIdClass(l, idClass);
-	totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
 	Display(keyDisplayInputScoreCreditClass, sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+	DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
 }
 // ---- end
+
+// output score of credit class
+void outputListScoreCreditClassPerPage1(LIST_REGISTERSTUDENT lrs, LIST_STUDENT ls, int indexBegin)
+{
+	
+	if(ls.n == 0) return;
+	int counts = -1;
+	
+	for(NODE_STUDENT* q = ls.pHead; q != NULL; q = q->pNext)
+	{
+		
+		counts++;
+		if(counts == indexBegin)
+		{
+			int i = -1; 
+			while (q != NULL && i < QUANTITY_PER_PAGE - 1)
+			{
+				NODE_REGISTERSTUDENT* p = FindRegisterStudent(lrs, q->_student.idStudent);
+				outputScoreCretdiClass(q->_student, p->_registerStudent, (++i) * 2);
+				q = q->pNext;
+			}
+			break;
+		}
+	}
+	
+	Gotoxy(X_PAGE, Y_PAGE);
+	cout << "Trang " << pageNowStudent << "/" << totalPageStudent;
+	
+}
+
+//end
+
 
 #endif
 

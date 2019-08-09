@@ -334,6 +334,7 @@ void CheckMoveAndValidateNumber(int &result, bool &isMove, int &ordinal, bool &i
 
 }
 
+
 void StandardName(char *a)
 {
 	a[0] = toupper(a[0]);

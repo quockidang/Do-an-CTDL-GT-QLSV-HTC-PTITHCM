@@ -1,4 +1,3 @@
-
 #ifndef _SUBJECT_H
 #define _SUBJECT_H
 
@@ -10,7 +9,6 @@ struct Subject{
 	int numberPractice; //so tin chi thuc hanh
 	char idSubject[11]; // ma mon hoc, key
 	char nameSubject[31]; //ten mon hoc
-	
 };
 typedef struct Subject SUBJECT;
 
@@ -96,32 +94,28 @@ void InsertSubjectToTree(TREE_SUBJECT &t, SUBJECT data)
 		if(strcmp(data.idSubject,t->_subject.idSubject) < 0 )
 			InsertSubjectToTree(t->pLeft, data);
 		else if(strcmp(data.idSubject,t->_subject.idSubject) > 0 )
-			InsertSubjectToTree(t->pRight, data);
-	
-		
+			InsertSubjectToTree(t->pRight, data);	
 	}
 
 }
 
-
-
-
-void Swap(SUBJECT &a, SUBJECT &b)
-{
-	SUBJECT temp = a;
-	a = b;
-	b = temp;
-}
-
-void QuickSort(int left, int right, SUBJECT* arr) {
+void QuickSort(int left, int right, SUBJECT arr[]) {	
 	SUBJECT key = arr[(left + right) / 2];
-	int i = left, j = right;
+	SUBJECT temp;
+	int i = left;
+	int j = right;
 	do {
-		while (strcmp(arr[i].nameSubject, key.nameSubject) < 0) i++;
-		while (strcmp(arr[j].nameSubject, key.nameSubject) > 0) j--;
-		if (i <= j) {
-			if (i < j) swap(arr[i], arr[j]);
-			i++;	j--;
+		while(strcmpi(arr[i].nameSubject, key.nameSubject) < 0 ) i++;
+		//while(strcmp(arr[i].nameSubject, key.nameSubject) == 0) continue;
+		while(strcmpi(arr[j].nameSubject, key.nameSubject) > 0) j--;
+		if (i <= j) {			
+			if(i < j)
+			{
+				temp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = temp;
+			}
+			i++; j--;
 		}
 	} while (i <= j);
 	if (left < j) QuickSort(left, j, arr);
@@ -179,9 +173,7 @@ bool IsDeleteSubject(TREE_SUBJECT &t, SUBJECT x)
 			{
 				DeleteSubjectCase_3(t->pRight);
 			}
-			
-			delete temp;
-			
+			delete temp;			
 			return true;
 		}
 	}
@@ -266,7 +258,7 @@ NODE_SUBJECT* ChooseSubject(TREE_SUBJECT &t)
 	int keyboard_read = 0;
 	int PASS = 1;
 	
-	QuickSort( 0, nSubject, arrSubject);
+	QuickSort(0, nSubject, arrSubject);
 		
 	Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 	
@@ -457,8 +449,15 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 					
 					NODE_SUBJECT* p = FindSubject(t, data.idSubject);
 					p->_subject = data;	
-					int index = 0;
-					while(index <= nSubject && arrSubject[index].idSubject != data.idSubject) index++;				
+					
+					for(int i = 0; i<= nSubject; i++)
+					{
+						if(stricmp(arrSubject[i].idSubject, data.idSubject) == 0)
+						{
+							arrSubject[i] = data;
+							break;
+						}
+					}			
 				}
 				else
 				{
@@ -477,6 +476,16 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 	}
 	
 	ShowCur(false);
+}
+
+void ChangePageMenuSubject(TREE_SUBJECT t)
+{
+	
+	Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
+	Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
+	QuickSort(0, nSubject, arrSubject);
+	OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
+
 }
 
 
@@ -518,7 +527,7 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 						Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Them thanh cong";
 						totalPageSubject = nSubject/ QUANTITY_PER_PAGE + 1;
 						pageNowSubject = 1;
-						QuickSort(0, nSubject, arrSubject);
+						QuickSort(0, nSubject, arrSubject);;
 						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);		
 					}
 					else if(key == KEY_F3)
@@ -551,10 +560,10 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 							}	
 							if(IsDeleteSubject(t, k->_subject))
 							{
-								//QuickSort(0, nSubject, arrSubject);
-								OutputListSubjectPerPage(t, (pageNowSubject -1) * QUANTITY_PER_PAGE);
+								if((nSubject + 1) / QUANTITY_PER_PAGE == 0) pageNowSubject--;
 								Gotoxy(X_NOTIFY, Y_NOTIFY);
 								cout << "Xoa thanh cong";
+								ChangePageMenuSubject(t);
 							}
 						}
 						else
@@ -564,38 +573,32 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 					{
 						NODE_SUBJECT* k = ChooseSubject(t);
 						if(k == NULL) goto backMenu;
+						
 						DisplayEdit(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string), 35);
 						inputSubject(t, k->_subject, true);
-						Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
-						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
-						
-						
+						Gotoxy(X_NOTIFY, Y_NOTIFY);
+						cout << "Edit thanh cong";
+						ChangePageMenuSubject(t);						
 					}
 					else if( key == PAGE_DOWN && pageNowSubject < totalPageSubject)
 					{
 						clrscr();
 						pageNowSubject++;
-						Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
-						Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
-						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
+						ChangePageMenuSubject(t);
 					}
 					else if(key == PAGE_UP && pageNowSubject > 1)
 					{
-						clrscr();
+						clrscr();					
 						pageNowSubject--;
-						Gotoxy(X_TITLE, Y_TITLE); cout << " QUAN LY DANH SACH MON HOC ";
-						Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
-						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);
+						ChangePageMenuSubject(t);
 					}					
 				}				
 				else if(key == ESC)
 				{
 					return;	
 				}
-						
+			}			
 		}
-			
-	}
 }
 
 

@@ -1,6 +1,6 @@
-6
+8
 int21
-CTDL&GT 
+CTDL&GT
 1
 2
 int201
@@ -11,6 +11,10 @@ INT503
 lap trinh game co ban
 2
 2
+1
+1
+1
+1
 int203
 lap trinh huong doi tuong
 2
@@ -27,3 +31,7 @@ int31
 Co so du lieu phan tan
 1
 2
+int405
+xyz
+1
+1

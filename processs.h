@@ -4,37 +4,11 @@
 #include <fstream>
 #include "creditclass.h"
 #include "processstemp.h"
-//#include "student.h"
-
-//------------------------------------DATABASE------------------------------------------
-//void LoadCreditClass(PTR_LISTCREDITCLASS &pList)
-//{
-//	int sizeRegisterStudent = sizeof(REGISTER_STUDENT) - sizeof(string);
-//	int sizeCreditClass = sizeof(CREDITCLASS) - sizeof(LIST_REGISTERSTUDENT);
-//	
-//	fstream filedata("DSLTC.txt", ios::in);
-//	while(!filedata.eof())
-//	{
-//		pList->listCreditClass[++pList->n] = new CREDITCLASS;
-//		filedata.read(reinterpret_cast<char*>(pList->listCreditClass[pList->n]), sizeCreditClass);
-//		InitListRegisterStudent(pList->listCreditClass[pList->n]->listRegisterStudent);
-//		
-//		int nRegisterStudent = pList->listCreditClass[pList->n]->listRegisterStudent->n;
-//	}
-//}
-
-
-
-
-
-
-
 
 
 void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
 {
 	file << cc->idClass << endl;
-	file << cc->nameSubject << endl;
 	file << cc->idSubject << endl;
 	file << cc->shoolYear << endl;
 	file << cc->semester << endl;
@@ -93,7 +67,6 @@ void LoadCreditClassFromFile(PTR_LISTCREDITCLASS &l)
 			// load thong tin vao LTC
 			inFile >> l->listCreditClass[i]->idClass;
 			getline(inFile, temp);
-			inFile.getline(l->listCreditClass[i]->nameSubject, 30, '\n');
 			inFile.getline(l->listCreditClass[i]->idSubject, 10, '\n');
 			
 			inFile >> l->listCreditClass[i]->shoolYear;
@@ -212,8 +185,6 @@ void SaveStudent(STUDENT st, fstream &file)
 	file << st.phoneNUmber << endl;
 	file << st.yearAdmission << endl;
 	file << st.sex << endl;
-	file << st.mediumScore << endl;
-	
 }
 
 
@@ -258,8 +229,6 @@ void LoadStudentFromFile(LIST_STUDENT &l)
 			inFile.getline(st.phoneNUmber, 12, '\n');
 			inFile >> st.yearAdmission;
 			inFile >> st.sex;
-			inFile >> st.mediumScore;
-			
 			AddTailListStudent(l, st);
 		}
 	}
@@ -322,7 +291,7 @@ backMenu:
 		
 				
 		Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
-		OutputListCreditClassPerPage(temp, 0);
+		OutputListCreditClassPerPage(temp, t, 0);
 		Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
 		cout << setw(xKeyDisplay[8] - xKeyDisplay[0]-1) << setfill(' ') << " ";
 		
@@ -426,6 +395,7 @@ backMenu:
 						
 						Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 10); cout << "Dang ky thanh cong";
 						Gotoxy(X_NOTIFY + 10, Y_NOTIFY - 9); cout << "An phim bat ky de thoat";
+						delete temp;
 						_getch();
 						return;
 					}	                     
@@ -448,41 +418,57 @@ bool StatisticStudentOnCreditClassIsSucceed(PTR_LISTCREDITCLASS l, TREE_SUBJECT 
 	DisplayEdit(keyFindCreditClass, sizeof(keyFindCreditClass) / sizeof(string), 35);
 	string id;
 	int schoolYear = 0, semester = 0, group = 0;
-	
+	int key;
 	input(id, schoolYear, semester, group, t);
 	
 	PTR_CREDITCLASS temp = FindCrediClassWithCondition(l, (char*)id.c_str(), schoolYear, semester, group);
 //	cout << temp->listRegisterStudent.pHead->pNext->_registerStudent.idStudent;
-	string arrIdStudent[100];
+
 	
 	LIST_STUDENT tempStudetn;
 	InitListStudent(tempStudetn);
-	int index = 0;
 	for (NODE_REGISTERSTUDENT *p = temp->listRegisterStudent.pHead; p != NULL; p = p->pNext)
-	{
-		cout << p->_registerStudent.point;
-		strcpy((char*)arrIdStudent[index].c_str(), p->_registerStudent.idStudent);
-		
-		NODE_STUDENT* q = BinarySearchStudent(listStudent, (char*)arrIdStudent[index++].c_str());
-		if(q == NULL) continue;
-		cout<< q->_student.lastName;
-		InsertOrderForListStudent(tempStudetn, q->_student);	
-		
+	{	
+		NODE_STUDENT* q = BinarySearchStudent(listStudent, p->_registerStudent.idStudent);
+		InsertOrderForListStudent(tempStudetn, q->_student);			
 	}
-	
-	
 	clrscr();
-	Gotoxy(X_TITLE, Y_TITLE); cout << "DSSV DANG KI LTC CO MA MH LA: " + (string)temp->idSubject ;
-	
+	NodeSubject* p = FindSubject(t, (char*)id.c_str());
+	pageNowStudent = 1;
+	totalPageStudent = ((tempStudetn.n - 1) / QUANTITY_PER_PAGE) + 1;
+	Gotoxy(X_TITLE, Y_TITLE); cout << "DSSV DANG KI LTC CO MA MH LA: " + (string)p->_subject.nameSubject;	
 	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-	int count = -1;
-	for(NODE_STUDENT* k = tempStudetn.pHead; k != NULL; k = k->pNext)
+	DeleteNote(sizeof(keyDisplayStudent) / sizeof(string));
+	OutputListStudentWithIdClassPerPage(tempStudetn, 0);
+
+	while(true)
 	{
-		count++;
-		OutputStudent(k->_student, count);
+		key = _getch();
+		if(key == PAGE_UP && pageNowStudent > 1)
+		{
+			pageNowStudent--;
+			clrscr();
+			
+			Gotoxy(X_TITLE, Y_TITLE); cout << "DSSV DANG KI LTC CO MA MH LA: " + (string)p->_subject.nameSubject;	
+			Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
+			DeleteNote(sizeof(keyDisplayStudent) / sizeof(string));
+			OutputListStudentWithIdClassPerPage(tempStudetn, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
+		}else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
+		{
+			pageNowStudent++;
+			clrscr();
+			
+			Gotoxy(X_TITLE, Y_TITLE); cout << "DSSV DANG KI LTC CO MA MH LA: " + (string)p->_subject.nameSubject;	
+			Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
+			DeleteNote(sizeof(keyDisplayStudent) / sizeof(string));
+			OutputListStudentWithIdClassPerPage(tempStudetn, (pageNowStudent - 1) * QUANTITY_PER_PAGE);		
+		}else if(key == ESC)
+		{
+			ClearListStudent(tempStudetn);
+			return true;
+			_getch();
+		}
 	}
-	_getch();
-	return true;
 }
 //------------------------------End output list student on resgister credit class-------------------
 
@@ -510,66 +496,68 @@ backMenu:
 	
 	int key;
 	string idClass;
-	Gotoxy(X_ADD - 7 , Y_ADD);
+	Gotoxy(X_TITLE, Y_TITLE);
 	cout << "NHAP VAO MA LOP CAN QUAN LY: ";
-	CheckMoveAndValdateIdClass(idClass, 22);
+	DisplayEdit(keyDisplayEditClass, sizeof(keyDisplayEditClass) / sizeof(string), 35);
+	CheckMoveAndValdateIdClass(idClass, 28);
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY);
 	cout << "BAN CO MUON SUA LAI MA LOP";
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1);
 	cout <<"ENTER NEU MA LOP DA DUNG HOAC NHAN PHIM BAT KI DE NHAP LAI";
 	key = _getch();
 	if(key != ENTER) goto backMenu;
-	
-	
-	LIST_STUDENT temp;
-	InitListStudent(temp);
-	string arrIdStudent[100];
-	int n = 0;
-	
-	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
-	{
-		if(strcmpi(p->_student.idClass, (char*)idClass.c_str()) == 0)
+	else{
+		LIST_STUDENT temp;
+		InitListStudent(temp);	
+		for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
 		{
-			AddTailListStudent(temp, p->_student);
-			arrIdStudent[n++] = (string)p->_student.idStudent;
+			if(strcmp(p->_student.idClass, (char*)idClass.c_str()) == 0)
+			{
+				AddTailListStudent(temp, p->_student);
+			}
 		}
-	}
-
-	SelectionSort(arrIdStudent, n);
-
-
-	clrscr();
-	pageNowStudent = 1;
-	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-	OutputListStudentPerpage(temp, 0, arrIdStudent, n);
-	Gotoxy(X_TITLE, Y_TITLE); cout << "DS SINH VIEN LOP: " + idClass ;
-	
-	while(true)
-	{
-		while(_kbhit())
+		clrscr();
+		pageNowStudent = 1;
+		totalPageStudent = ((temp.n -1) / QUANTITY_PER_PAGE) + 1;
+		Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
+		DeleteNote(sizeof(keyDisplayStudent) / sizeof(string)); 
+		OutputListStudentWithIdClassPerPage(temp, 0);
+		Gotoxy(X_TITLE, Y_TITLE); cout << "DS SINH VIEN LOP: " + idClass ;
+		
+		while(true)
 		{
-			key = _getch();
-			if (key == 0 || key == 224)
+			while(_kbhit())
 			{
 				key = _getch();
-				if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
+				if (key == 0 || key == 224)
 				{
-					pageNowStudent++;
-					ChangePageManageStudent(temp, (char*)idClass.c_str());
+					key = _getch();
+					if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
+					{
+						pageNowStudent++;
+						DeleteNote(sizeof(keyDisplayStudent) / sizeof(string));
+						ChangePageManageStudent(temp, idClass);
+					}
+					else if(key == PAGE_UP && pageNowStudent > 1)
+					{
+						pageNowStudent--;
+						DeleteNote(sizeof(keyDisplayStudent) / sizeof(string));
+						ChangePageManageStudent(temp, idClass);
+					}
 				}
-				else if(key == PAGE_UP && pageNowStudent > 1)
+				else if(key == ESC)
 				{
-					pageNowStudent--;
-					ChangePageManageStudent(temp, (char*)idClass.c_str());
+					ClearListStudent(temp);
+					_getch();
+					return true;
 				}
 			}
-			else if(key == ESC)
-			{
-				return true;
-			}
-		}
-		
-	}	
+			
+		}		
+	}
+	
+	
+	
 }
 
 //---------------------Output List Student of CLass sort by idStudent -------
@@ -587,7 +575,6 @@ bool inputSocreCreditClassIsSuccedd(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT t
 	NODE_SUBJECT* p = FindSubject(t, tempCC->idSubject);
 	LIST_STUDENT templs;
 	InitListStudent(templs);
-	
 	for(NODE_REGISTERSTUDENT* k = tempCC->listRegisterStudent.pHead; k != NULL; k = k->pNext)
 	{
 		NODE_STUDENT* i = FindStudent(l, k->_registerStudent.idStudent);
@@ -598,9 +585,15 @@ bool inputSocreCreditClassIsSuccedd(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT t
 	/// end nhap data input
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "Nhap diem cho mon hoc: " << + p->_subject.nameSubject;
-	Gotoxy(X_TITLE, Y_TITLE); cout << "Nien khoa: " << schoolYear << " Hoc ki: " << semester << " Nhom: " << group;
+	Gotoxy(X_TITLE, Y_TITLE + 1); cout << "Nien khoa: " << schoolYear << " Hoc ki: " << semester << " Nhom: " << group;
 	pageNowStudent = 1;
+	totalPageStudent = (templs.n - 1) / QUANTITY_PER_PAGE + 1;
+	
 	Display(keyDisplayInputScoreCreditClass, sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+	DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));	
+	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
+	cout << setw(xKeyDisplay[5] - xKeyDisplay[0]-1) << "F2: NHAP DIEM - ESC: Thoat" << setfill(' ');
+	
 	int key;
 	outputListScoreCreditClassPerPage(tempCC->listRegisterStudent, templs, 0);
 	while(true)
@@ -621,32 +614,32 @@ bool inputSocreCreditClassIsSuccedd(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT t
 					//outputListScoreCreditClassPerPage(tempCC->listRegisterStudent, templs, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
 					Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Nhap diem thanh cong";
 				}
-				else if(key == PAGE_DOWN && pageNowCreditClass < totalPageCreditClass)
+				else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
 				{
 					pageNowStudent++;
 					ChangePageManageScore(templs, tempCC->listRegisterStudent, p);
+					DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));	
+					Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
+					cout << setw(xKeyDisplay[5] - xKeyDisplay[0]-1) << "F2: NHAP DIEM - ESC: Thoat" << setfill(' ');
 				}
-				else if(key == PAGE_UP && pageNowCreditClass > 1)
+				else if(key == PAGE_UP && pageNowStudent > 1)
 				{
 					pageNowStudent--;
 					ChangePageManageScore(templs, tempCC->listRegisterStudent, p);
+					
+					DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));	
+					Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
+					cout << setw(xKeyDisplay[5] - xKeyDisplay[0]-1) << "F2: NHAP DIEM - ESC: thoat" << setfill(' ');
 				}
 			}
 			else if(key == ESC)
-				return true;			
+			{
+				_getch();
+				return true;
+			}
+							
 		}
-	}
-	
-	
-	
-	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
-	cout << setw(xKeyDisplay[5] - xKeyDisplay[0]-1) << setfill(' ') << " ";
-	
-	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 40);
-	cout << setw(xKeyDisplay[5] - xKeyDisplay[0]-1) << "F10: Luu Diem - ESC: Thoat" << setfill(' ');
-	_getch();
-	return true;
-	
+	}	
 }
 // end input score
 
@@ -663,53 +656,139 @@ bool outputScoreofCreditClass(PTR_LISTCREDITCLASS pListCC, LIST_STUDENT lst, TRE
 	NODE_SUBJECT* p = FindSubject(t, tempCC->idSubject);
 	LIST_STUDENT templs;
 	InitListStudent(templs);
-	
+	int n = 0;
 	for(NODE_REGISTERSTUDENT* k = tempCC->listRegisterStudent.pHead; k != NULL; k = k->pNext)
 	{
-		NODE_STUDENT* i = BinarySearchStudent(lst, k->_registerStudent.idStudent);
-		AddTailListStudent(templs, i->_student);
+		
+		if(k->_registerStudent.point != -1)
+		{
+			NODE_STUDENT* i = BinarySearchStudent(lst, k->_registerStudent.idStudent);
+			InsertOrderForListStudent(templs, i->_student);
+			n++;
+		}
+		
 	}
-	
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "BAN DIEM MON HOC: " << + p->_subject.nameSubject;
-	Gotoxy(X_TITLE, Y_TITLE); cout << "Nien khoa: " << schoolYear << " Hoc ki: " << semester << " Nhom: " << group;
+	Gotoxy(X_TITLE, Y_TITLE + 1); cout << "Nien khoa: " << schoolYear << " Hoc ki: " << semester << " Nhom: " << group;
 	pageNowStudent = 1;
+	totalPageStudent = (n - 1) / QUANTITY_PER_PAGE + 1;
 	Display(keyDisplayInputScoreCreditClass, sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+	DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
 	int key;
 	outputListScoreCreditClassPerPage1(tempCC->listRegisterStudent, templs, 0);
 	
-	_getch();
-	return true;
+	while(true)
+	{
+		key = _getch();
+		if(key == PAGE_UP && pageNowStudent > 1)
+		{
+			pageNowStudent--;
+			clrscr();
+			Gotoxy(X_TITLE, Y_TITLE); cout << "BAN DIEM MON HOC: " << + p->_subject.nameSubject;
+			Gotoxy(X_TITLE, Y_TITLE + 1); cout << "Nien khoa: " << schoolYear << " Hoc ki: " << semester << " Nhom: " << group;
+						
+			Display(keyDisplayInputScoreCreditClass, sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+			DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+			outputListScoreCreditClassPerPage1(tempCC->listRegisterStudent, templs, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
+		}
+		else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
+		{
+			pageNowStudent++;
+			clrscr();
+			Gotoxy(X_TITLE, Y_TITLE); cout << "BAN DIEM MON HOC: " << + p->_subject.nameSubject;
+			Gotoxy(X_TITLE, Y_TITLE + 1); cout << "Nien khoa: " << schoolYear << " Hoc ki: " << semester << " Nhom: " << group;
+			
+			
+			Display(keyDisplayInputScoreCreditClass, sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+			DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+			outputListScoreCreditClassPerPage1(tempCC->listRegisterStudent, templs, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
+		}else if(key == ESC)
+		{
+			ClearListStudent(templs);
+			_getch();
+			return true;		
+		}
+	}
 }
 
 
 
-// output score subject of class
+// output score medium of class
 bool outputScoreSubjectOfCreditClass(PTR_LISTCREDITCLASS lcc, LIST_STUDENT l, TREE_SUBJECT t)
 {
-	string idClass = "d16cqpt01";
+	Gotoxy(X_TITLE, Y_TITLE); cout << "NHAP MA LOP DE KET XUAT DIEM TRUNG BINH";
+	string idClass;
+	DisplayEdit(keyDisplayEditClass, sizeof(keyDisplayEditClass) / sizeof(string), 35);
+	CheckMoveAndValdateIdClass(idClass, 28);
+	int key;
+	
+	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
+	{
+		if(strcmp(p->_student.idClass, (char*)idClass.c_str()) == 0)
+		{
+			
+		}
+	}
 	
 	
-	// end input
+	
 	LIST_STUDENT temp;
 	InitListStudent(temp);
 	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
 	{
-		if(p->_student.idClass == (char*)idClass.c_str())
+		if(strcmp(p->_student.idClass, (char*)idClass.c_str()) == 0 )
 		{
 			float temps = MediumScoreOfStudent(lcc, t, p->_student.idStudent);
-			p->_student.mediumScore = temps;
-			AddTailListStudent(temp, p->_student);
+			if(temps < 0)
+			{
+				temps = 0;
+				p->_student.mediumScore = temps;	
+				AddTailListStudent(temp, p->_student);
+			}else
+			{
+				p->_student.mediumScore = temps; 	
+				AddTailListStudent(temp, p->_student);
+			}
 		}
 	}
 	pageNowStudent = 1;
 	totalPageStudent = ((temp.n -1) / QUANTITY_PER_PAGE) + 1;
+	
+	Gotoxy(X_TITLE, Y_TITLE); cout << "BANG THONG KE DIEM TRUNG BINH KHOA HOC";
+	Gotoxy(X_TITLE + 2, Y_TITLE + 1); cout << "Lop: " << idClass << "  - Nam nhap hoc: " << temp.pHead->_student.yearAdmission ;
+	
 	Display(keyDisplayInputScoreCreditClass, sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
+	DeleteNote(sizeof(keyDisplayInputScoreCreditClass) / sizeof(string));
 	outputMediumScoreOfStudentPerPage(temp, 0);
-	_getch();
-	return true;
+	
+	
+	while(true)
+	{
+		key = _getch();
+		if(key == PAGE_UP && pageNowStudent > 1)
+		{
+			pageNowStudent--;
+			ChangePageManageStudent(temp, idClass, temp.pHead->_student.yearAdmission);
+		}
+		else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
+		{
+			pageNowStudent++;
+			ChangePageManageStudent(temp, idClass, temp.pHead->_student.yearAdmission);
+		}else if(key == ESC)
+		{
+			ClearListStudent(temp);
+			_getch();
+			return true;		
+		}
+	}
 }
+// end output medium score of class
 
+bool SummaryTableScoreOfClassIsSucced(PTR_LISTCREDITCLASS lcc, LIST_STUDENT l, TREE_SUBJECT t)
+{
+	
+}
 
 void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 {
@@ -734,8 +813,7 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 			case 1:
 				clrscr();
 				MenuManagerStudent(l);
-				break;
-				
+				break;				
 			case 2:
 				clrscr();				
 				MenuSubjectManager(t);
@@ -767,10 +845,15 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 						clrscr();
 						if(outputScoreofCreditClass(pListCC, l, t) == false) continue; // in ban diem mon hoc
 						break;
+					case 4:
+						clrscr();
+						if(outputScoreSubjectOfCreditClass(pListCC, l, t) == false) continue;
+						break;
+					case 5:
+						
 					default:
 						break;
 				}
-			
 		}
 		clrscr();
 	}

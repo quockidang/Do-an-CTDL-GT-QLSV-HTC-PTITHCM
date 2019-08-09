@@ -3,6 +3,7 @@
 
 #include "registerstudent.h"
 #include "display.h"
+
 //#include "processstemp.h"
 // define DS LTC
 
@@ -19,9 +20,8 @@ struct CreditClass{
 	LIST_REGISTERSTUDENT listRegisterStudent;	
 };
 typedef struct CreditClass CREDITCLASS;
-typedef CREDITCLASS* PTR_CREDITCLASS;	 
-
-
+typedef CREDITCLASS* PTR_CREDITCLASS;
+	 
 struct ListCreaditClass{
 	
 	int n = -1;
@@ -95,11 +95,11 @@ void SwapClass(PTR_CREDITCLASS &a, PTR_CREDITCLASS &b)
 }
 
 
-void OutputCreditClass(PTR_CREDITCLASS cc, int ordinal) // ordinal == thu tu
+void OutputCreditClass(PTR_CREDITCLASS cc, TREE_SUBJECT t, int ordinal) // ordinal == thu tu
 {
 	DeleteOldData(sizeof(keyDisplayCreditClass) / sizeof(string), ordinal);
 	Gotoxy(xKeyDisplay[0] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->idClass;
-	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->nameSubject;
+	Gotoxy(xKeyDisplay[1] + 1, Y_DISPLAY + 3 + ordinal); cout << FindSubject(t, cc->idSubject)->_subject.nameSubject;
 	Gotoxy(xKeyDisplay[2] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->idSubject;
 	Gotoxy(xKeyDisplay[3] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->shoolYear;
 	Gotoxy(xKeyDisplay[4] + 1, Y_DISPLAY + 3 + ordinal); cout << cc->semester;
@@ -116,24 +116,22 @@ bool dataCreditClassIsEmty(PTR_CREDITCLASS temp)
 }
 
 
-void OutputListCredit(PTR_LISTCREDITCLASS l)
-{
-	if(l == NULL || l->n == -1) return;
-	for(int i = 0; i <= l->n; i++)
-	{
-		
-		
-		OutputCreditClass(l->listCreditClass[i], i);
-	}
-}
+//void OutputListCredit(PTR_LISTCREDITCLASS l)
+//{
+//	if(l == NULL || l->n == -1) return;
+//	for(int i = 0; i <= l->n; i++)
+//	{	
+//		OutputCreditClass(l->listCreditClass[i], i);
+//	}
+//}
 
-void OutputListCreditClassPerPage(PTR_LISTCREDITCLASS l, int indexBegin)
+void OutputListCreditClassPerPage(PTR_LISTCREDITCLASS l, TREE_SUBJECT t, int indexBegin)
 {
 	if(l == NULL || l->n == -1) return;
 	for(int i = 0; i + indexBegin <= l->n && i < QUANTITY_PER_PAGE; i++)
 	{
 		
-		OutputCreditClass(l->listCreditClass[i + indexBegin], i * 2);
+		OutputCreditClass(l->listCreditClass[i + indexBegin], t, i * 2);
 	}
 	Gotoxy(X_PAGE, Y_PAGE);
 	cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
@@ -187,7 +185,7 @@ PTR_CREDITCLASS FindCrediClassWithCondition(PTR_LISTCREDITCLASS l, char* idSubje
 
 
 
-void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t, bool isEdited = false) // nhap  Lop TC
+void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS &cc, TREE_SUBJECT t, bool isEdited = false) // nhap  Lop TC
 {
 	ShowCur(true);
 	
@@ -304,13 +302,10 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t
 			}
 			else
 			{
-				
-				
-				string name;
 				strcpy(cc->idSubject, idSubject.c_str());
 				NODE_SUBJECT* p = FindSubject(t, cc->idSubject);
-				name = (string)p->_subject.nameSubject;
-				strcpy(cc->nameSubject, name.c_str());
+				
+				strcpy(cc->nameSubject, p->_subject.nameSubject);
 				//cc->idClass = ++l->n;
 				cc->group = group;
 				cc->shoolYear = shoolYear;
@@ -347,18 +342,18 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS cc, TREE_SUBJECT t
 }
 
 
-void SetDefaultChosenCreditClass(PTR_LISTCREDITCLASS l, int ordinal)
+void SetDefaultChosenCreditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t, int ordinal)
 {
 	SetBGColor(GREEN);
-	OutputCreditClass(l->listCreditClass[ordinal], (ordinal % QUANTITY_PER_PAGE) * 2);
+	OutputCreditClass(l->listCreditClass[ordinal], t, (ordinal % QUANTITY_PER_PAGE) * 2);
 	SetBGColor(PURPLE);
 }
 
-void EffectiveMenuCreditClass(int ordinal, PTR_LISTCREDITCLASS l)
+void EffectiveMenuCreditClass(int ordinal, PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 {
 	int current = ordinal;
-	SetDefaultChosenCreditClass(l, current);
-	OutputCreditClass(l->listCreditClass[currposPrecCreditClass], (currposPrecCreditClass % QUANTITY_PER_PAGE) * 2);
+	SetDefaultChosenCreditClass(l, t, current);
+	OutputCreditClass(l->listCreditClass[currposPrecCreditClass], t, (currposPrecCreditClass % QUANTITY_PER_PAGE) * 2);
 	currposPrecCreditClass = current;
 }
 
@@ -387,8 +382,8 @@ int ChooseCreditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 	
 	
 	
-	OutputListCreditClassPerPage(l, 0);
-	SetDefaultChosenCreditClass(l, currposCreditClass);
+	OutputListCreditClassPerPage(l, t, 0);
+	SetDefaultChosenCreditClass(l, t, currposCreditClass);
 	
 	while(true)
 	{
@@ -403,14 +398,14 @@ int ChooseCreditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 					if(currposCreditClass % QUANTITY_PER_PAGE > 0)
 					{
 						currposCreditClass = currposCreditClass - 1;
-						EffectiveMenuCreditClass(currposCreditClass, l);
+						EffectiveMenuCreditClass(currposCreditClass, l, t);
 					}
 					break;
 				case KEY_DOWN:
 					if(currposCreditClass % QUANTITY_PER_PAGE < QUANTITY_PER_PAGE - 1 && currposCreditClass < l->n)
 					{
 						currposCreditClass = currposCreditClass + 1;
-						EffectiveMenuCreditClass(currposCreditClass, l);
+						EffectiveMenuCreditClass(currposCreditClass, l, t);
 					}
 					break;
 				case PAGE_UP:
@@ -418,8 +413,8 @@ int ChooseCreditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 					{
 						pageNowCreditClass--;
 						ChangePageCreditClass(l);
-						OutputListCreditClassPerPage(l, (pageNowCreditClass -1) * QUANTITY_PER_PAGE);
-						SetDefaultChosenCreditClass(l, currposCreditClass);
+						OutputListCreditClassPerPage(l, t, (pageNowCreditClass -1) * QUANTITY_PER_PAGE);
+						SetDefaultChosenCreditClass(l, t, currposCreditClass);
 					}
 					break;
 				case PAGE_DOWN:
@@ -427,8 +422,8 @@ int ChooseCreditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 					{
 						pageNowCreditClass++;
 						ChangePageCreditClass(l);
-						OutputListCreditClassPerPage(l, (pageNowCreditClass -1) * QUANTITY_PER_PAGE);
-						SetDefaultChosenCreditClass(l, currposCreditClass);		
+						OutputListCreditClassPerPage(l, t, (pageNowCreditClass -1) * QUANTITY_PER_PAGE);
+						SetDefaultChosenCreditClass(l, t, currposCreditClass);		
 					}
 					break;	
 				case ESC:
@@ -448,17 +443,17 @@ void ChangePageManageCreaditClass(PTR_LISTCREDITCLASS l, TREE_SUBJECT t)
 {
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
-	OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
+	OutputListCreditClassPerPage(l, t, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
 	Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 }
 
-void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
+void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT &t)
 {
 	backMenu:
 		clrscr();
 		pageNowCreditClass = 1;
 		totalPageCreditClass = 0;
-		OutputListCreditClassPerPage(l, 0);
+		OutputListCreditClassPerPage(l, t, 0);
 		
 		Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 		int key;
@@ -481,16 +476,9 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 						DisplayEdit(keyDisplayCreaditClassEdit, sizeof(keyDisplayCreaditClassEdit) / sizeof(string), 35);
 						InputCreditClass(l, cc, t);
 						
-						clrscr();
-						
-						Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));		
-						Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
-					
 						totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
 						pageNowCreditClass = 1;
-						OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
-						Gotoxy(X_PAGE, Y_PAGE);
-						cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
+						ChangePageManageCreaditClass(l, t);
 						Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 						cout << "THEM THANH CONG!";
 					}
@@ -519,17 +507,9 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 							}else
 							{
 								clrscr();
-								Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";
-								Gotoxy(X_PAGE, Y_PAGE);
-								cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
-								Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
 								if((l->n + 1) % QUANTITY_PER_PAGE == 0) pageNowCreditClass--;
 								totalPageCreditClass = l->n / QUANTITY_PER_PAGE + 1;
-								OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
-								
-								Gotoxy(X_PAGE, Y_PAGE);
-								cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;	
-								
+								ChangePageManageCreaditClass(l, t);
 								Gotoxy(X_NOTIFY, Y_NOTIFY);
 								cout << "Xoa thanh cong";
 							}
@@ -544,13 +524,7 @@ void MenuManageCreditClass(PTR_LISTCREDITCLASS &l, TREE_SUBJECT t)
 						DisplayEdit(keyDisplayCreaditClassEdit, sizeof(keyDisplayCreaditClassEdit) / sizeof(string), 35);
 						InputCreditClass(l, l->listCreditClass[k], t, true);
 						
-						clrscr();
-						Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY DANH SACH LOP TIN CHI";						
-						Display(keyDisplayCreditClass, sizeof(keyDisplayCreditClass) / sizeof(string));
-						OutputListCreditClassPerPage(l, (pageNowCreditClass - 1) * QUANTITY_PER_PAGE);
-						
-						Gotoxy(X_PAGE, Y_PAGE);
-						cout << "Trang " << pageNowCreditClass << "/" << totalPageCreditClass;
+						ChangePageManageCreaditClass(l, t);
 						Gotoxy(X_NOTIFY + 10, Y_NOTIFY);
 						cout << "SUA THANH CONG";
 					}

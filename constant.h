@@ -30,8 +30,6 @@
 #define X_TITLE 60
 #define Y_TITLE 1
 
-
-
 #define X_PAGE 20
 #define Y_PAGE 46
 
@@ -43,12 +41,11 @@
 #define GREEN 6
 #define PURPLE 5
 
-
 //Constant
 #define MAX_CLASS 5000
 #define MAX_STUDENT 60
-#define MIN_STUDENT 20
-#define MAX_SUBJECT 10
+#define MIN_STUDENT 30
+#define MAX_SUBJECT 1000
 #define QUANTITY_PER_PAGE 5
 #define MAX_LENGTH 10
 

@@ -1,16 +1,82 @@
 #ifndef _DISPLAY_H
 #define _DISPLAY_H
-
-
-
 #include "validate.h"
 
+
+const int so_item = 8;
+const int dong =5;
+const int cot = 20 ;
+const int Up = 72;
+const int Down = 80;
+
+const int MAXLIST =100;
+char thucdon [so_item][50] = {"1. Quan li may bay                                                                  ",
+			                  "2. Quan li chuyen bay                                                         ",
+			                  "3. Dat ve                                                                     ",
+			                  "4. Huy ve                                                                     ",
+			                  "5. In danh sach cua mot chuyen bay                                            ",
+			                  "6. In danh chuyen bay khoi hanh trong ngay dd/mm/yyyy hh:mm den xxx ma con ve ",
+			                  "7. In danh sach cac ve con trong cua mot chuyen bay theo ma                   ",
+			                  "8. Ket thuc chuong trinh  "};
+
+void Normal () {
+	SetColor(15);
+	SetBGColor(0);
+}
+void HighLight () {
+	SetColor(15);
+	SetBGColor(1);
+}
+int MenuDong(char td [so_item][50]){
+  Normal();
+  system("cls");   int chon =0;
+  int i; 
+  for ( i=0; i< so_item ; i++)
+  { gotoxy(cot, dong +i);
+    cout << td[i];
+  }
+  HighLight();
+  gotoxy(cot,dong+chon);
+  cout << td[chon];
+  char kytu;
+do {
+  kytu = getch();
+  if (kytu==0) kytu = getch();
+  switch (kytu) {
+    case Up :if (chon+1 >1)
+  			  {
+  		              	Normal();
+              	gotoxy(cot,dong+chon);
+              	cout << td[chon];
+              	chon --;
+              	HighLight();
+              	gotoxy(cot,dong+chon);
+              	cout << td[chon];
+  				
+  			  }
+  			  break;
+  	case Down :if (chon+1 <so_item)
+  			  {
+  		        Normal();
+              	gotoxy(cot,dong+chon);
+              	cout << td[chon];
+              	chon ++;
+              	HighLight();
+              	gotoxy(cot,dong+chon);
+              	cout << td[chon];
+  				
+  			  }
+  			  break;
+  	case 13 : return chon+1;
+  }  // end switch
+  } while (1);
+}
 
 // main menu .....
 string keyMainMenu[5] = {"Lop Tin Chi", "Sinh Vien", "Mon Hoc", "Dang Ki LTC", "Thong Ke"};
 string keyStatistic[6] = {"IN DSSV LTC", " IN DSSV", "Nhap Diem", "Bang Diem MH", "Diem TB Khoa Hoc", "Ban Diem TK" };
 
-int xMainMenu[6] = {10, 40, 70, 100, 130, 160};
+int xMainMenu[7] = {10, 35, 60, 85, 110, 135, 160};
 
 void CreateBox(int x, int y, string text, int length)
 {
@@ -28,8 +94,7 @@ void ChangeColorItemMainMenu(string key, int index, int newColor, int oldColor)
 	Gotoxy(xMainMenu[index] -1 , Y_MAIN_MENU);
 	SetBGColor(newColor);
 	cout << key;
-	SetBGColor(oldColor);
-	
+	SetBGColor(oldColor);	
 }
 
 void   EffectiveMenuHorizontal(string key[], int pos)
@@ -94,16 +159,7 @@ int ChooseMainMenu(string key[], int nKey)
 		}
 	}
 }
-
-
 /// ------------------------END MENU----------------------
-
-
-
-
-
-
-
 
 int xKeyDisplay[9] = {2,22,52,62,72, 87, 102, 112, 122};
 
@@ -118,7 +174,8 @@ string keyFindCreditClass[4] = {"Ma MH:", "NK:", "HK:", "Nhom:"};
 string keyFindRegisterStudent[3] = {"Ma Sinh vien: ", "Nien Khoa: ", "Hoc Ki: "};
 
 string keyDisplayInputScoreCreditClass[5] = {"MA SV", "Ho", "Ten", "Diem", "STT"};
-string keyDisplayEditInputScore[2] = {"Phan nguyen: ", "Phan thap phan:"};
+string keyDisplayEditInputScore[1] = {"Diem: "};
+string keyDisplayEditClass[1] = {"Ma Lop: "};
 // ---------------------------------------------------------------------------------------------
 string keyDisplayRegisterCreditClass[7] = {"Ten MH:", "Ma MH:", "NK:", "Hoc Ki:", "Nhom:", "SVMax:", "SVMin:" };
 void DeleteOldData(int nKey, int locate)
@@ -187,8 +244,7 @@ void Display(string key[], int nKey)
 		{
 			cout << char(205); //duong thang ngang
 		}
-
-
+		
 		//border top (note)
 		Gotoxy(i, Y_DISPLAY + 39);
 		if (i == xKeyDisplay[nKey])
@@ -251,7 +307,9 @@ void DeleteMenuAdd()
 	}
 }
 
-
-
-
+void DeleteNotify()
+{
+	Gotoxy(X_NOTIFY, Y_NOTIFY);
+	cout << setw(35) << setfill(' ') << " ";
+}
 #endif

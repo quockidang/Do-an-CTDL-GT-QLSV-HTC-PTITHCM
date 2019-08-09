@@ -1,19 +1,19 @@
 #ifndef _STUDENT_H
 #define _STUDENT_H
-//#include"creditclass.h"
+#include"creditclass.h"
 
 struct student{
 	char idStudent[13];
 	char idClass[16];
 	char fistName[21], lastName[11];
+	
 	int sex = 1; // 1 male, 2 female
 	char phoneNUmber[13];
 	int yearAdmission; // nam nhap hoc
-	float mediumScore = 0.0;
-	
+	float mediumScore = 0;	
 };
 typedef struct student STUDENT;
-typedef STUDENT* PTR_STUDENT;
+
 struct NodeStudent{
 	STUDENT _student;
 	struct NodeStudent *pNext;
@@ -26,8 +26,6 @@ struct ListStudent{
 };
 typedef struct ListStudent LIST_STUDENT;
 
-
-// get node student -- lay dia chi cua mot sinh vie
 NODE_STUDENT* GetNodeStudent(STUDENT DATA)
 {
 	NODE_STUDENT *p = new NodeStudent; //init pointer
@@ -38,15 +36,10 @@ NODE_STUDENT* GetNodeStudent(STUDENT DATA)
 	return p;
 }
 
-// init List student -- khoi tao danh sach sinh vien
 void InitListStudent(LIST_STUDENT &l)
 {
-	l.pHead = l.pTail = NULL;
-	
+	l.pHead = l.pTail = NULL;	
 }
-
-
-// Them vao dau danh sach -- add head list student
 
 void AddHeadListStudent(LIST_STUDENT &l, STUDENT data)
 {
@@ -60,10 +53,9 @@ void AddHeadListStudent(LIST_STUDENT &l, STUDENT data)
 
 bool ListStudentIsEmty(LIST_STUDENT l)
 {
-	return l.pHead = NULL;
-	
+	return l.pHead = NULL;	
 }
-// add tail list student
+
 void AddTailListStudent(LIST_STUDENT &l, STUDENT data)
 {
 	NODE_STUDENT* p = GetNodeStudent(data);
@@ -77,48 +69,59 @@ void AddTailListStudent(LIST_STUDENT &l, STUDENT data)
 		l.pTail = p;	
 	}
 
-	++l.n;
-	
+	++l.n;	
 }
 
-
-
-// tim kiem voi maSV
 NODE_STUDENT* FindStudent(LIST_STUDENT l, char* id)
 {
 	if(l.pHead == NULL) return NULL;
+	
 	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
-	{
 		if (strcmp(p->_student.idStudent, id) == 0)
 			return p;
-	}
 	return NULL;
 }
+
+NODE_STUDENT* Middle(NODE_STUDENT* start, NODE_STUDENT* last)
+{
+	if (start == NULL)
+		return NULL;
+	NODE_STUDENT * slow = start;
+	NODE_STUDENT * fast = start->pNext;
+
+	while (fast != last)
+	{
+		fast = fast->pNext;
+		if (fast != last)
+		{
+			slow = slow->pNext;
+			fast = fast->pNext;
+		}
+	}
+	return slow;
+}
+
 NODE_STUDENT* BinarySearchStudent(LIST_STUDENT l, char* id)
 { 
 	NODE_STUDENT* start = l.pHead;
 	NODE_STUDENT* last = NULL;
-	int n = l.n;
-	int middle = n/2;
 	if(l.pHead == NULL) return NULL;
 	do
 	{	
-		NODE_STUDENT* p = start;
-		for ( int i = 0; i < middle ; i++)
-			p=p->pNext;
-	
-		if (strcmp(p->_student.idStudent, id) == 0)
-			return p;
+		NODE_STUDENT* p = Middle(start, last);
 		
+		if(p == NULL) return NULL;
+		
+		if (strcmp(p->_student.idStudent, id) == 0)
+			return p;		
 		else if (strcmp(p->_student.idStudent, id) < 0)
 		{		
-			middle =  middle / 2;		
-			start = p->pNext;
-			
+				
+			start = p->pNext;			
 		}
 		else
 		{	
-			middle = middle / 2;
+		
 			last = p;
 		}
 	} 
@@ -127,9 +130,6 @@ NODE_STUDENT* BinarySearchStudent(LIST_STUDENT l, char* id)
 
 }
 
-
-
-// tim index cua sinh vien
 int FindIndexStudent(LIST_STUDENT l, char *id)
 {
 	int index = -1;
@@ -142,7 +142,6 @@ int FindIndexStudent(LIST_STUDENT l, char *id)
 	}
 	return 0;
 }
-
 
 NODE_STUDENT* FindStudentByOrdinal(LIST_STUDENT l, int ordinal)
 {
@@ -158,13 +157,10 @@ NODE_STUDENT* FindStudentByOrdinal(LIST_STUDENT l, int ordinal)
 		p = p->pNext;
 		count++;
 	}
-	
 	return p;
 }
 
 
-
-// insert apter - them vao sau
 void InsertAfter(NODE_STUDENT* p, STUDENT &data)
 {
 	if(p == NULL) return;
@@ -175,28 +171,22 @@ void InsertAfter(NODE_STUDENT* p, STUDENT &data)
 	p->pNext = q;
 }
 
-
-//insert order
 void InsertOrderForListStudent(LIST_STUDENT &l, STUDENT data)
 {
-	
 	if(l.pHead == NULL)
 	{	
 		AddHeadListStudent(l, data);
 		return;
 	}
 	
-	NODE_STUDENT *p, *pAfter, *pBefore;
-	
+	NODE_STUDENT *p, *pAfter, *pBefore;	
 	p = GetNodeStudent(data);
-	
-	//pAfter = pBefore->pNext;
 	
 	for(pAfter = l.pHead; pAfter != NULL && (strcmp(pAfter->_student.idStudent, data.idStudent) < 0); pBefore = pAfter, pAfter = pAfter->pNext);
 	
-	if(pAfter == l.pHead) // Add Head
+	if(pAfter == l.pHead) 
 		AddHeadListStudent(l, p->_student);
-	else // them nut p vao truoc nut s
+	else
 	{
 		p->pNext = pAfter;
 		pBefore->pNext = p;
@@ -205,8 +195,6 @@ void InsertOrderForListStudent(LIST_STUDENT &l, STUDENT data)
 	
 }
 
-
-// xoa dau - delete head
 bool IsDeletedHead(LIST_STUDENT &l)
 {
 	if(ListStudentIsEmty(l)) return false;
@@ -218,8 +206,6 @@ bool IsDeletedHead(LIST_STUDENT &l)
 	return true;
 }
 
-
-// delete tail -- xoa cuoi
 bool IsDeletedTail(LIST_STUDENT &l)
 {
 	if(ListStudentIsEmty(l)) return false;
@@ -232,7 +218,7 @@ bool IsDeletedTail(LIST_STUDENT &l)
 			l.pTail = beforeP;
 			beforeP->pNext = NULL;
 			delete p;
-			
+						
 			--l.n;
 			return true;
 		}
@@ -240,7 +226,6 @@ bool IsDeletedTail(LIST_STUDENT &l)
 	}
 }
 
-// delete after node p
 bool IsDeletedAfter(LIST_STUDENT &l, NODE_STUDENT*p)
 {
 	if (p == NULL || p->pNext == NULL) return false;
@@ -251,10 +236,9 @@ bool IsDeletedAfter(LIST_STUDENT &l, NODE_STUDENT*p)
 	return true;
 }
 
-// delete with id Student
 bool IsDeletedStudentWithId(LIST_STUDENT &l, STUDENT data)
 {
-	NODE_STUDENT* nodeDeleted = FindStudent(l, data.idStudent);
+	NODE_STUDENT* nodeDeleted = BinarySearchStudent(l, data.idStudent);   //FindStudent(l, data.idStudent);
 	if (nodeDeleted == NULL) return false;
 	if (nodeDeleted == l.pHead) return IsDeletedHead(l);
 	if (nodeDeleted == l.pTail) return IsDeletedTail(l);
@@ -281,33 +265,6 @@ bool ClearListStudent(LIST_STUDENT &l)
 	return true;
 }
 
-void SelectionSort(string arr[], int n)
-{
-	int i, j, indexMin;
-	string minStr;
-	
-	for(i = 0; i< n - 1; i++)
-	{
-		indexMin = i;
-		minStr = arr[i];
-		
-		for(j = i + 1; j < n; j++)
-		{
-			if(minStr > arr[j])
-			{
-				minStr = arr[j];
-				indexMin = j;
-			}
-		}
-		
-		if(indexMin != i)
-		{
-			swap(arr[i], arr[indexMin]);
-		}
-	}
-}
-
-
 void OutputStudent(STUDENT st, int locate)
 {
 	DeleteOldData(sizeof(keyDisplayStudent) / sizeof(string), locate);
@@ -322,57 +279,33 @@ void OutputStudent(STUDENT st, int locate)
 	Gotoxy(xKeyDisplay[5] + 1, Y_DISPLAY + 3 + locate); cout << st.yearAdmission;
 }
 
-//void OutputListStudentWithIdClass(LIST_STUDENT l, char* idClass)
-//{
-//	if(l.pHead == NULL && l.pTail == NULL) return;
-//	int count = -1;
-//	
-//	for(NODE_STUDENT* q = l.pHead; q->pNext == NULL; q=q->pNext)
-//	{
-//		count++;
-//		if(count == index)
-//		{
-//			int i = -1;
-//			while( q != NULL && i < QUANTITY_PER_PAGE - 1)
-//			{
-//				OutputStudent(q->_student, (++i) * 2);
-//				q = q->pNext;
-//			}
-//			break;
-//		}		
-//	}
-//}
-	
-void OutputListStudentWithIdClassPerPage(LIST_STUDENT l, int indexBegin, char* idClass)
-{	
-	
+void OutputListStudentWithIdClassPerPage(LIST_STUDENT l, int indexBegin)
+{		
 	if(l.pHead == NULL && l.pTail == NULL) return;
-	int count = -1;
-	
+	int count = -1;	
 	for(NODE_STUDENT* q = l.pHead; q != NULL; q = q->pNext)
 	{
-		if(strcmpi(q->_student.idClass, idClass) == 0)
+		count++;
+		if(count == indexBegin)
 		{
-			count++;
-			if(count == indexBegin && count < QUANTITY_PER_PAGE)
+			int i = -1;
+			while(q != NULL && i < QUANTITY_PER_PAGE - 1)
 			{
-				OutputStudent(q->_student, count * 2);
-			}
-		}
-				
+				OutputStudent(q->_student, (++i) * 2);
+				q = q->pNext;
+			}	
+			break;		
+		}			
 	}
 	
-	totalPageStudent = (count / QUANTITY_PER_PAGE) + 1;
 	Gotoxy(X_PAGE, Y_PAGE);
 	cout << "Trang " << pageNowStudent << "/" << totalPageStudent;
-	return;
 }
 
 bool DataStudentIsEmty(STUDENT st)
 {
 	if(strlen(st.idClass) == 0)return true;
-	if(strlen(st.idStudent) == 0) return true;
-	
+	if(strlen(st.idStudent) == 0) return true;	
 	return false;
 }
 
@@ -387,11 +320,8 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 	string idStudent, firstName, lastName, phoneNumber;
 	int yearAdmission = 0, sex = 0;
 	
-	
-
 	if(isEdited)
-	{		// binding data
-		
+	{		
 		idStudent = st.idStudent;
 		firstName = st.fistName;
 		lastName = st.lastName;
@@ -420,8 +350,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		{
 			case 0:
 				if(isEdited) break;
-				CheckMoveAndValidateID(idStudent, isMoveUp, ordinal, isSave, 20 + 7, 12);
-				
+				CheckMoveAndValidateID(idStudent, isMoveUp, ordinal, isSave, 20 + 7, 12);				
 				if(FindStudent(l, (char *)idStudent.c_str()) == NULL)
 				{
 					idIsExist = false;
@@ -452,21 +381,17 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 			if (ordinal == 0)
 				isMoveUp = false;
 			ordinal--;
-
 		}
 		else
 		{
 			if (ordinal == 5)
 				isMoveUp = true;
 			ordinal++;
-		}
-		
-		
+		}		
 		if(isSave)
 		{	
 			Gotoxy(X_NOTIFY, Y_NOTIFY);			
 			cout << setw(50) << setfill(' ') << " ";
-			if(idStudent.empty()) return;
 			if(sex == 0 || firstName.empty() || lastName.empty() || yearAdmission == 0 || phoneNumber.empty() )
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY);
@@ -479,17 +404,15 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 			}
 			else
 			{
-				
-				// binding data
 				StandarString(firstName);
 				StandarString(lastName);
-				
-				
+										
 				strcpy(st.idStudent, idStudent.c_str());				
 				strcpy(st.fistName, firstName.c_str());
 				strcpy(st.lastName, lastName.c_str());
 				strcpy(st.phoneNUmber, phoneNumber.c_str());
 				st.sex = sex;
+				
 				st.yearAdmission = yearAdmission;
 				StandardName(st.lastName);
 				StandardName(st.fistName);
@@ -499,8 +422,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 					NODE_STUDENT* p = FindStudent(l, st.idStudent);
 					p->_student = st;
 				}else
-				{
-					//	AddTailListStudent(l, st);
+				{				
 					InsertOrderForListStudent(l, st);				
 				}
 				totalPageStudent =((l.n - 1) / QUANTITY_PER_PAGE) + 1;
@@ -540,7 +462,7 @@ void ChangePageChooseStudent(LIST_STUDENT l)
 	currposPrecStudent = (pageNowStudent - 1) * QUANTITY_PER_PAGE;
 }
 
-NODE_STUDENT* ChooseStudent(LIST_STUDENT l, char* idClass)
+NODE_STUDENT* ChooseStudent(LIST_STUDENT l)
 {
 	int keyboard_read = 0;
 	ShowCur(false);
@@ -552,7 +474,7 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l, char* idClass)
 	NODE_STUDENT* newNodeStudent = FindStudentByOrdinal(l, currposStudent);
 	NODE_STUDENT* oldNodeStudent = NULL;
 	
-	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
+	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
 	SetDefaultChooseStudent(newNodeStudent->_student, currposStudent);
 	
 	while(true)
@@ -567,7 +489,7 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l, char* idClass)
 				{
 					currposStudent = currposStudent - 1;
 					oldNodeStudent = newNodeStudent;
-					for( newNodeStudent = l.pHead; newNodeStudent->pNext != oldNodeStudent; newNodeStudent = newNodeStudent->pNext);
+					for(newNodeStudent = l.pHead; newNodeStudent->pNext != oldNodeStudent; newNodeStudent = newNodeStudent->pNext);
 					EffectiveMenuStudent(currposStudent, newNodeStudent->_student, oldNodeStudent->_student);				
 				}
 				break;
@@ -585,11 +507,10 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l, char* idClass)
 				{
 					pageNowStudent++;
 					ChangePageChooseStudent(l);
-					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
+					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
 					
 					newNodeStudent = FindStudentByOrdinal(l, currposStudent);
-					SetDefaultChooseStudent(newNodeStudent->_student, currposStudent);
-				
+					SetDefaultChooseStudent(newNodeStudent->_student, currposStudent);				
 				}
 				break;
 			case PAGE_UP:
@@ -597,7 +518,7 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l, char* idClass)
 				{
 					pageNowStudent--;
 					ChangePageChooseStudent(l);
-					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
+					OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);
 					newNodeStudent = FindStudentByOrdinal(l, currposStudent);
 					SetDefaultChooseStudent(newNodeStudent->_student, currposStudent);
 				}
@@ -610,17 +531,13 @@ NODE_STUDENT* ChooseStudent(LIST_STUDENT l, char* idClass)
 				return NULL; 
 				break;	
 		}
-	}
-	
+	}	
 }
 
-void ChangePageManageStudent(LIST_STUDENT l, char* idClass)
+void ChangePageManageStudent(LIST_STUDENT l, string idClass)
 {
-	clrscr();
-	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + (string)idClass ;
-	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, idClass);
-	//OutputListStudentWithIdClass(l, idClass);
-
+	Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass ;
+	OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE);	
 	Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
 }
 
@@ -628,28 +545,40 @@ void MenuManagerStudent(LIST_STUDENT &l)
 {
 backMenu:
 	clrscr();
-	pageNowStudent = 1;
 	int key;
 	string idClass;
-	Gotoxy(X_ADD - 7 , Y_ADD);
+	Gotoxy(X_TITLE, Y_TITLE);
 	cout << "NHAP VAO MA LOP CAN QUAN LY: ";
-	CheckMoveAndValdateIdClass(idClass, 22);
+	
+	DisplayEdit(keyDisplayEditClass, sizeof(keyDisplayEditClass) / sizeof(string), 35);
+	CheckMoveAndValdateIdClass(idClass, 28);
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY);
 	cout << "BAN CO MUON SUA LAI MA LOP";
 	Gotoxy(X_NOTIFY - 10, Y_NOTIFY + 1);
 	cout <<"ENTER: TIEO TUC - ESC: THOAT - AN PHIM BAT KI DE NHAP LAI";
+	
 	key = _getch();
 	if(key == ESC)
 		return;
 	else if(key == ENTER)
 	{
 		clrscr();
-		OutputListStudentWithIdClassPerPage(l, 0, (char*)idClass.c_str());
-		//OutputListStudentWithIdClass(l, (char*)idClass.c_str());
+		LIST_STUDENT temp;
+		InitListStudent(temp);
+		int n = 0;
+		for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
+		{
+			if(strcmp(p->_student.idClass, (char*)idClass.c_str()) == 0)
+			{
+				AddTailListStudent(temp, p->_student);
+				n++;				
+			}
+		}
+		pageNowStudent = 1;
+		totalPageStudent = ((n - 1) / QUANTITY_PER_PAGE) + 1;
+		OutputListStudentWithIdClassPerPage(temp, 0);
+		
 		Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-		
-		
-		
 		Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass ;
 		
 		while(true)
@@ -666,18 +595,21 @@ backMenu:
 						strcpy(st.idClass, idClass.c_str());
 						DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
 						InputStudent(l, st, false);
+						if(strlen(st.idStudent) == 0) return;
+												
+						InsertOrderForListStudent(l, st);
+						InsertOrderForListStudent(temp, st);
 						
-						string ids = (string)st.idStudent;
-						if(ids.empty()) return;
-						
-						
-						ChangePageManageStudent(l, (char*)idClass.c_str());
+						n++;
+						totalPageStudent = ((n - 1) / QUANTITY_PER_PAGE) + 1;
+						clrscr();
+						ChangePageManageStudent(temp, idClass);
 						Gotoxy(X_NOTIFY, Y_NOTIFY);
 						cout << "Them thanh cong";
 					}
 					else if( key == KEY_F3)
 					{
-						NODE_STUDENT* k = ChooseStudent(l,(char*)idClass.c_str());
+						NODE_STUDENT* k = ChooseStudent(temp);
 						if(k == NULL) goto backMenu;
 						
 						Gotoxy(X_NOTIFY, Y_NOTIFY);
@@ -685,11 +617,16 @@ backMenu:
 						key = _getch();
 						if(key == ENTER)
 						{
-							if(IsDeletedStudentWithId(l, k->_student))
+							string temps = k->_student.idStudent;
+							NODE_STUDENT* p = FindStudent(l, (char*)temps.c_str());
+							IsDeletedStudentWithId(l, p->_student);
+							if(IsDeletedStudentWithId(temp, k->_student))
 							{
-								totalPageStudent = ((l.n - 1) / QUANTITY_PER_PAGE) + 1;
-								if(l.n % QUANTITY_PER_PAGE == 0) pageNowStudent--;
-								ChangePageManageStudent(l, (char*)idClass.c_str());
+								n--;
+								totalPageStudent = ((n - 1) / QUANTITY_PER_PAGE) + 1;
+								if(n % QUANTITY_PER_PAGE == 0) pageNowStudent--;
+								clrscr();
+								ChangePageManageStudent(temp, idClass);
 								Gotoxy(X_NOTIFY, Y_NOTIFY);
 								cout << "Xoa thanh cong";
 							}
@@ -697,41 +634,43 @@ backMenu:
 					}
 					else if( key == KEY_F4)
 					{
-						NODE_STUDENT* k = ChooseStudent(l, (char*)idClass.c_str());
+						NODE_STUDENT* k = ChooseStudent(temp);
 						if(k == NULL) goto backMenu;
 						
 						DisplayEdit(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string), 35);
 						InputStudent(l, k->_student, true);
+				
+						NODE_STUDENT* p = BinarySearchStudent(l, k->_student.idStudent);
+						p = k;
+						
 						clrscr();
-						Display(keyDisplayStudent, sizeof(keyDisplayStudent) / sizeof(string));
-						OutputListStudentWithIdClassPerPage(l, (pageNowStudent - 1) * QUANTITY_PER_PAGE, (char*)idClass.c_str());
-						Gotoxy(X_TITLE, Y_TITLE); cout << "QUAN LY SINH VIEN LOP: " + idClass;
+						ChangePageManageStudent(temp, idClass);
 						Gotoxy(X_NOTIFY, Y_NOTIFY);
 						cout << "Sua thanh cong";
 					}
 					else if(key == PAGE_DOWN && pageNowStudent < totalPageStudent)
 					{
 						pageNowStudent++;
-						ChangePageManageStudent(l, (char*)idClass.c_str());
+						clrscr();
+						ChangePageManageStudent(temp, idClass);
 					}
 					else if(key == PAGE_UP && pageNowStudent > 1)
 					{
 						pageNowStudent--;
-						ChangePageManageStudent(l, (char*)idClass.c_str());
+						clrscr();
+						ChangePageManageStudent(temp, idClass);
 					}
 				}
 				else if(key == ESC)
 				{
+					ClearListStudent(temp);
 					return;
 				}
-			}
-			
+			}			
 		}
 	}
 	else
-	 goto backMenu;
-	
-	
+	 goto backMenu;	
 }
 
 #endif
