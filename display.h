@@ -3,74 +3,7 @@
 #include "validate.h"
 
 
-const int so_item = 8;
-const int dong =5;
-const int cot = 20 ;
-const int Up = 72;
-const int Down = 80;
 
-const int MAXLIST =100;
-char thucdon [so_item][50] = {"1. Quan li may bay                                                                  ",
-			                  "2. Quan li chuyen bay                                                         ",
-			                  "3. Dat ve                                                                     ",
-			                  "4. Huy ve                                                                     ",
-			                  "5. In danh sach cua mot chuyen bay                                            ",
-			                  "6. In danh chuyen bay khoi hanh trong ngay dd/mm/yyyy hh:mm den xxx ma con ve ",
-			                  "7. In danh sach cac ve con trong cua mot chuyen bay theo ma                   ",
-			                  "8. Ket thuc chuong trinh  "};
-
-void Normal () {
-	SetColor(15);
-	SetBGColor(0);
-}
-void HighLight () {
-	SetColor(15);
-	SetBGColor(1);
-}
-int MenuDong(char td [so_item][50]){
-  Normal();
-  system("cls");   int chon =0;
-  int i; 
-  for ( i=0; i< so_item ; i++)
-  { gotoxy(cot, dong +i);
-    cout << td[i];
-  }
-  HighLight();
-  gotoxy(cot,dong+chon);
-  cout << td[chon];
-  char kytu;
-do {
-  kytu = getch();
-  if (kytu==0) kytu = getch();
-  switch (kytu) {
-    case Up :if (chon+1 >1)
-  			  {
-  		              	Normal();
-              	gotoxy(cot,dong+chon);
-              	cout << td[chon];
-              	chon --;
-              	HighLight();
-              	gotoxy(cot,dong+chon);
-              	cout << td[chon];
-  				
-  			  }
-  			  break;
-  	case Down :if (chon+1 <so_item)
-  			  {
-  		        Normal();
-              	gotoxy(cot,dong+chon);
-              	cout << td[chon];
-              	chon ++;
-              	HighLight();
-              	gotoxy(cot,dong+chon);
-              	cout << td[chon];
-  				
-  			  }
-  			  break;
-  	case 13 : return chon+1;
-  }  // end switch
-  } while (1);
-}
 
 // main menu .....
 string keyMainMenu[5] = {"Lop Tin Chi", "Sinh Vien", "Mon Hoc", "Dang Ki LTC", "Thong Ke"};
@@ -186,6 +119,9 @@ void DeleteOldData(int nKey, int locate)
 		cout << setw(xKeyDisplay[i + 1] - xKeyDisplay[i] - 2) << setfill(' ') << " ";
 	}
 }
+
+
+
 
 
 void Display(string key[], int nKey)

@@ -4,7 +4,7 @@
 #include <fstream>
 #include "creditclass.h"
 #include "processstemp.h"
-
+#include "ScoreSubjectofClass.h"
 
 void SaveCreditClass(PTR_CREDITCLASS cc, fstream &file)
 {
@@ -723,16 +723,6 @@ bool outputScoreSubjectOfCreditClass(PTR_LISTCREDITCLASS lcc, LIST_STUDENT l, TR
 	CheckMoveAndValdateIdClass(idClass, 28);
 	int key;
 	
-	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
-	{
-		if(strcmp(p->_student.idClass, (char*)idClass.c_str()) == 0)
-		{
-			
-		}
-	}
-	
-	
-	
 	LIST_STUDENT temp;
 	InitListStudent(temp);
 	for(NODE_STUDENT* p = l.pHead; p != NULL; p = p->pNext)
@@ -785,9 +775,38 @@ bool outputScoreSubjectOfCreditClass(PTR_LISTCREDITCLASS lcc, LIST_STUDENT l, TR
 }
 // end output medium score of class
 
+
+
+void OutputScoreTableOfClass()
+{
+	
+}
+
 bool SummaryTableScoreOfClassIsSucced(PTR_LISTCREDITCLASS lcc, LIST_STUDENT l, TREE_SUBJECT t)
 {
 	
+	int key;
+	string idClass = "d17cqpt01";
+	Gotoxy(X_TITLE, Y_TITLE);
+	cout << "NHAP VAO MA LOP CAN KET XUAT: ";
+	//DisplayEdit(keyDisplayEditClass, sizeof(keyDisplayEditClass) / sizeof(string), 35);
+	//CheckMoveAndValdateIdClass(idClass, 28);	
+	
+//	initListReportStudent(l, idClass);
+//	FindSubjectInCreditClass(lcc);
+//	CreateArridSubject();
+
+	caucuoi(l, lcc, idClass);
+	
+//	for(int i = 0; i < nIdSubject; i++)
+//	{
+//		cout << idSubject[i] << endl;
+//	}
+//	// display
+
+	
+	_getch();
+	return true;
 }
 
 void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
@@ -827,6 +846,7 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 				MainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
 				int chosenStatistic = ChooseMainMenu(keyStatistic, sizeof(keyStatistic) / sizeof(string));
 				
+			
 				switch(chosenStatistic)
 				{
 					case 0:
@@ -850,7 +870,10 @@ void MergeAll(PTR_LISTCREDITCLASS &pListCC, TREE_SUBJECT &t, LIST_STUDENT &l)
 						if(outputScoreSubjectOfCreditClass(pListCC, l, t) == false) continue;
 						break;
 					case 5:
-						
+						clrscr();
+						if(SummaryTableScoreOfClassIsSucced(pListCC, l, t) == false) continue;
+					
+						break;
 					default:
 						break;
 				}
