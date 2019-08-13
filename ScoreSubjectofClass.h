@@ -413,7 +413,7 @@ void caucuoi(LIST_STUDENT l, PTR_LISTCREDITCLASS lcc, string idClass)
 		}
 	}
 	
-		string keyDisplayScoreSubject[nIdSubject + 3];
+	string keyDisplayScoreSubject[nIdSubject + 3];
 	keyDisplayScoreSubject[0] = "STT";
 	keyDisplayScoreSubject[1] = "MSSV";
 	keyDisplayScoreSubject[2] = "Ho ten";

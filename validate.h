@@ -6,7 +6,7 @@
 #include <math.h>
 #include <conio.h>
 #include <stdio.h>
-
+#include <stddef.h>
 #include <stdlib.h>
 #include <dos.h>
 #include <string.h>

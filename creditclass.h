@@ -41,8 +41,9 @@ PTR_CREDITCLASS FindCreditClassWithBinariSearch(PTR_LISTCREDITCLASS l, unsigned 
 	{
 		if(l->listCreditClass[i]->idClass == id)
 			return l->listCreditClass[i];
-		return NULL;
+		
 	}
+	return NULL;
 }
 
 PTR_CREDITCLASS BinarySearchCreditClass(PTR_LISTCREDITCLASS l, int n, unsigned int id)
@@ -242,6 +243,7 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS &cc, TREE_SUBJECT 
 		{
 											
 			case 0:
+				if(isEdited) break;
 				CheckMoveAndValidateID(idSubject, isMoveUp, ordinal, isSave, 27, 10);
 				break;
 				
@@ -288,8 +290,11 @@ void InputCreditClass(PTR_LISTCREDITCLASS &l, PTR_CREDITCLASS &cc, TREE_SUBJECT 
 			temp->studentMax = studentMax;
 			temp->studentMin = studentMin;
 			temp->group = group;
-			
-			if (dataCreditClassIsEmty(temp))
+			if(FindSubject(t, temp->idSubject) == NULL)
+			{
+				Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Mon hoc khong ton tai";
+			}
+			else if(dataCreditClassIsEmty(temp))
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Cac truong du lieu khong duoc de trong";
 			}

@@ -1,4 +1,4 @@
-8
+10
 int21
 CTDL&GT
 1
@@ -15,6 +15,14 @@ lap trinh game co ban
 1
 1
 1
+int001
+ki nang tao lap van ban
+1
+1
+int089
+ly thuyet thong tin
+1
+2
 int203
 lap trinh huong doi tuong
 2

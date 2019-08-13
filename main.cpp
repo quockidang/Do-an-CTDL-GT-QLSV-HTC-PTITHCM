@@ -37,6 +37,8 @@ int main()
 	SaveStudentToFile(l);
 	SaveSubjectToFile(t);
 	
-
 	return 0;
 }
+	
+
+

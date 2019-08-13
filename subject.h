@@ -1,7 +1,7 @@
 #ifndef _SUBJECT_H
 #define _SUBJECT_H
 
-
+//#include "creditclass.h"
 #include "display.h"
 
 struct Subject{
@@ -242,7 +242,6 @@ void ChangePageSubject(TREE_SUBJECT t)
 {
 	currposSubject = (pageNowSubject - 1) * QUANTITY_PER_PAGE;
 	currposPrecSubject = (pageNowSubject - 1) * QUANTITY_PER_PAGE;
-	
 	clrscr();
 	Display(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string));
 	DeleteNote(sizeof(keyDisplaySubject) / sizeof(string));
@@ -523,12 +522,12 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 						SUBJECT sj;
 						DisplayEdit(keyDisplaySubject, sizeof(keyDisplaySubject) / sizeof(string), 35);
 						inputSubject(t, sj);
-						
+						ChangePageMenuSubject(t);
 						Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Them thanh cong";
-						totalPageSubject = nSubject/ QUANTITY_PER_PAGE + 1;
-						pageNowSubject = 1;
-						QuickSort(0, nSubject, arrSubject);;
-						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);		
+//						totalPageSubject = nSubject/ QUANTITY_PER_PAGE + 1;
+//						pageNowSubject = 1;
+//						QuickSort(0, nSubject, arrSubject);;
+//						OutputListSubjectPerPage(t, (pageNowSubject - 1) * QUANTITY_PER_PAGE);		
 					}
 					else if(key == KEY_F3)
 					{
@@ -538,7 +537,15 @@ void MenuSubjectManager(TREE_SUBJECT &t)
 						
 						NODE_SUBJECT* k = ChooseSubject(t);
 						if(k == NULL) goto backMenu;
-						
+//						for(int i = 0; i < lcc->n; i++)
+//						{
+//							if(stricmp(k->_subject.idSubject, lcc->listCreditClass[i]->idSubject) == 0)
+//							{
+//								Gotoxy(X_NOTIFY, Y_NOTIFY); cout << "Mon hoc dang ton tai trong lop tin chi, khong the xoa";
+//								_getch();
+//								goto backMenu;
+//							}
+//						}
 						Gotoxy(X_NOTIFY, Y_NOTIFY);
 						cout << "Ban co chan chan xoa? ENTER == dong y";
 						key = _getch();

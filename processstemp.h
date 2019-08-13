@@ -420,7 +420,7 @@ void outputMediumScoreOfStudentPerPage(LIST_STUDENT ls, int indexBegin)
 	
 }
 
-void ChangePageManageStudent(LIST_STUDENT l, string idClass, int schoolYear)
+void ChangePageManageStudent_1(LIST_STUDENT l, string idClass, int schoolYear)
 {
 	clrscr();
 	Gotoxy(X_TITLE, Y_TITLE); cout << "BANG THONG KE DIEM TRUNG BINH KHOA HOC";
