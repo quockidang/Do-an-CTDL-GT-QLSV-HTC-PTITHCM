@@ -1,6 +1,6 @@
 #ifndef _SUBJECT_H
 #define _SUBJECT_H
-
+#include<string.h>
 //#include "creditclass.h"
 #include "display.h"
 
@@ -421,6 +421,9 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 		{
 			Gotoxy(X_NOTIFY, Y_NOTIFY);
 			cout << setw(50) << setfill(' ') << " ";
+		//	StandarString(name);
+			trim(name);
+			StandarString(name);
 			if (id.empty() || name.empty() || numberPractice == 0 || numberTheory == 0)
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY);
@@ -440,6 +443,7 @@ void inputSubject(TREE_SUBJECT &t, SUBJECT &data, bool isEdited = false)
 				//strcpy(data.idSubject, id.c_str());
 				strcpy(data.nameSubject, name.c_str());
 				//data.nameSubject = name;
+				StandardName((char*)name.c_str()); 
 				data.numberPractice = numberPractice;
 				data.numberTheory = numberTheory;
 				

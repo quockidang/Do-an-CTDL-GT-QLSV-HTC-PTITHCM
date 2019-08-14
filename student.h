@@ -185,12 +185,17 @@ void InsertOrderForListStudent(LIST_STUDENT &l, STUDENT data)
 	for(pAfter = l.pHead; pAfter != NULL && (strcmp(pAfter->_student.idStudent, data.idStudent) < 0); pBefore = pAfter, pAfter = pAfter->pNext);
 	
 	if(pAfter == l.pHead) 
+	{
 		AddHeadListStudent(l, p->_student);
+		return;
+
+	}
 	else
 	{
 		p->pNext = pAfter;
 		pBefore->pNext = p;
-		++l.n;
+		l.n++;
+		return;
 	}
 	
 }
@@ -392,6 +397,11 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 		{	
 			Gotoxy(X_NOTIFY, Y_NOTIFY);			
 			cout << setw(50) << setfill(' ') << " ";
+			trim(firstName);
+			trim(lastName);
+			StandarString(firstName);
+			StandarString(lastName);
+		
 			if(sex == 0 || firstName.empty() || lastName.empty() || yearAdmission == 0 || phoneNumber.empty() )
 			{
 				Gotoxy(X_NOTIFY, Y_NOTIFY);
@@ -404,8 +414,7 @@ void InputStudent(LIST_STUDENT &l, STUDENT &st, bool isEdited = false)
 			}
 			else
 			{
-				StandarString(firstName);
-				StandarString(lastName);
+				
 										
 				strcpy(st.idStudent, idStudent.c_str());				
 				strcpy(st.fistName, firstName.c_str());
@@ -597,7 +606,7 @@ backMenu:
 						InputStudent(l, st, false);
 						if(strlen(st.idStudent) == 0) return;
 												
-						InsertOrderForListStudent(l, st);
+						//InsertOrderForListStudent(l, st);
 						InsertOrderForListStudent(temp, st);
 						
 						n++;

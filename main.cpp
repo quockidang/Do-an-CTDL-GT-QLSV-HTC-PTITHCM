@@ -36,7 +36,10 @@ int main()
 	SaveCreditClassToFile(listCC);
 	SaveStudentToFile(l);
 	SaveSubjectToFile(t);
-	
+//	string a = "          ";
+//	trim(a);
+//	StandarString(a);
+//	cout << "1"+a+"1";
 	return 0;
 }
 	

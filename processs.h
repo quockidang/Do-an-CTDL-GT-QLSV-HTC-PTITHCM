@@ -187,6 +187,17 @@ void SaveStudent(STUDENT st, fstream &file)
 	file << st.sex << endl;
 }
 
+void SaveStudent1(STUDENT st, fstream &file)
+{
+	file << st.idClass << endl;
+	file << st.idStudent << endl;
+	file << st.fistName << endl;
+	file << st.lastName << endl;
+	file << st.phoneNUmber << endl;
+	file << st.yearAdmission << endl;
+	file << st.sex;
+}
+
 
 void SaveStudentToFile(LIST_STUDENT l)
 {
@@ -195,10 +206,14 @@ void SaveStudentToFile(LIST_STUDENT l)
 	if (outFile.is_open())
 	{
 		outFile << l.n << endl;
-		// so doc gia..
-		for(NODE_STUDENT* k = l.pHead; k != NULL; k = k->pNext)
+		NODE_STUDENT* k = l.pHead;
+		for(int i = 0; i < l.n; i++)
 		{
+			if (k->pNext == NULL)
+			SaveStudent1(k->_student, outFile);
+			else
 			SaveStudent(k->_student, outFile);
+			k = k->pNext;
 		}
 	}
 	else

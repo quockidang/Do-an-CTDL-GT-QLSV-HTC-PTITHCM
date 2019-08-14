@@ -6,7 +6,7 @@
 
 struct RegisterStudent {
 	char idStudent[13];
-	float point = -1;
+	float point = 0;
 };
 
 typedef struct RegisterStudent REGISTER_STUDENT;
